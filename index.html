@@ -719,25 +719,26 @@ body.dark .email-pre{background:#151820;}
     <div style="font-size:13px;color:#666;margin-top:12px;">If they can't get to a number or specific outcome on the Result, probe: <em>"What did that lead to?" / "How did you measure success?" / "How much revenue / time / clients did that affect?"</em></div>
   </div>
 
-  <!-- QUESTION SETS -->
+  <!-- CANDIDATE INFO & SUMMARY -->
+  <div style="background:var(--white);border-radius:14px;border:1.5px solid var(--border);padding:18px 22px;margin-bottom:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+    <div style="flex:1;min-width:220px;">
+      <div style="font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Candidate name</div>
+      <input id="candidateName" type="text" placeholder="e.g. Jane Smith" style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);background:var(--cream);outline:none;transition:border-color .15s;" onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--border)'">
+    </div>
+    <div style="flex:1;min-width:220px;">
+      <div style="font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Interview score</div>
+      <div style="font-size:28px;font-weight:600;color:var(--navy);font-family:'DM Mono',monospace;" id="scorecardTotal">0 / 50</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:2px;">40+ = strong hire · 30–39 = train up</div>
+    </div>
+  </div>
+
+  <!-- QUESTION CARDS (STAR METHOD) -->
   <div id="interviewSections"></div>
 
-  <!-- SCORECARD -->
-  <div style="background:var(--white);border-radius:14px;border:1.5px solid var(--border);padding:22px 24px;margin-top:8px;">
-    <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:16px;letter-spacing:.04em;text-transform:uppercase;font-size:11px;">Candidate scorecard</div>
-    <div id="scorecardRows"></div>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:18px;padding-top:14px;border-top:1px solid var(--border);">
-      <div>
-        <div style="font-size:13px;font-weight:600;color:var(--navy);">Total score</div>
-        <div style="font-size:11px;color:var(--muted);">Out of 50 · 40+ = strong hire · 30–39 = train up · below 30 = pass</div>
-      </div>
-      <div style="font-size:32px;font-weight:600;color:var(--navy);font-family:'DM Mono',monospace;" id="scorecardTotal">0 / 50</div>
-    </div>
-    <div style="margin-top:14px;">
-      <div style="font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Candidate name</div>
-      <input id="candidateName" type="text" placeholder="e.g. Jane Smith" style="width:100%;max-width:320px;border:1.5px solid var(--border);border-radius:10px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);background:var(--cream);outline:none;transition:border-color .15s;" onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--border)'">
-    </div>
-    <div style="margin-top:14px;">
+  <!-- OVERALL NOTES & DECISION -->
+  <div style="background:var(--white);border-radius:14px;border:1.5px solid var(--border);padding:22px 24px;margin-top:16px;">
+    <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:16px;letter-spacing:.04em;text-transform:uppercase;font-size:11px;">Summary & decision</div>
+    <div style="margin-bottom:14px;">
       <div style="font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Hiring decision</div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
         <div id="dec-hire" onclick="setDecision('hire')" style="cursor:pointer;padding:8px 18px;border-radius:30px;border:1.5px solid var(--border);font-size:13px;font-weight:500;color:var(--muted);transition:all .18s;">✓ Strong hire</div>
@@ -745,11 +746,11 @@ body.dark .email-pre{background:#151820;}
         <div id="dec-pass" onclick="setDecision('pass')" style="cursor:pointer;padding:8px 18px;border-radius:30px;border:1.5px solid var(--border);font-size:13px;font-weight:500;color:var(--muted);transition:all .18s;">✗ Pass</div>
       </div>
     </div>
-    <div style="margin-top:14px;">
-      <div style="font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Interview notes</div>
+    <div style="margin-bottom:14px;">
+      <div style="font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Overall interview notes</div>
       <textarea id="interviewNotes" placeholder="Key observations, red flags, things to follow up on in a second interview..." style="width:100%;min-height:80px;border:1.5px solid var(--border);border-radius:10px;padding:12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);background:var(--cream);resize:vertical;outline:none;"></textarea>
     </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
       <button onclick="exportPdf()" style="padding:9px 18px;border-radius:10px;background:var(--navy);color:var(--gold);font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;">📄 Export PDF</button>
       <button onclick="exportTxt()" style="padding:9px 18px;border-radius:10px;background:var(--white);color:var(--navy);font-size:13px;font-weight:600;border:1.5px solid var(--border);cursor:pointer;font-family:'DM Sans',sans-serif;">📝 Export TXT</button>
     </div>
@@ -1126,6 +1127,22 @@ body.dark .email-pre{background:#151820;}
 .star-section p{font-size:14px;color:#333;line-height:1.75;}
 .star-section ul{font-size:14px;color:#333;line-height:1.9;padding-left:18px;}
 .star-conclusion{background:var(--green-light);border-radius:10px;padding:14px;font-size:14px;color:#1a3a28;line-height:1.65;}
+/* STAR PHASE 1 — CARD LAYOUT */
+.star-card{background:var(--white);border-radius:14px;border:1.5px solid var(--border);margin-bottom:12px;overflow:hidden;transition:border-color .18s;}
+.star-card.open{border-color:var(--navy);}
+.star-card-head{display:flex;align-items:flex-start;gap:12px;padding:16px 18px;cursor:pointer;}
+.star-qnum{font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:var(--gold);background:var(--navy);padding:4px 8px;border-radius:6px;flex-shrink:0;margin-top:2px;}
+.star-category{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;}
+.star-question{font-size:14px;font-weight:600;color:var(--navy);line-height:1.5;font-style:italic;}
+.star-chev{font-size:20px;color:var(--muted);margin-left:8px;flex-shrink:0;transition:transform .2s;line-height:1;margin-top:2px;}
+.star-card.open .star-chev{transform:rotate(90deg);}
+.star-card-body{display:none;border-top:1px solid var(--border);padding:20px 22px;}
+.star-card.open .star-card-body{display:block;}
+.star-rating-head{display:flex;gap:2px;flex-shrink:0;}
+.star-dot{font-size:16px;color:var(--gold);transition:opacity .15s;}
+.star-dot.active{opacity:1 !important;}
+.star-note-area{width:100%;min-height:70px;border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);background:var(--cream);resize:vertical;outline:none;transition:border-color .15s;}
+.star-note-area:focus{border-color:var(--navy);}
 /* LAZ METHOD PHASE 2 */
 .laz-card{background:var(--white);border-radius:14px;border:1.5px solid var(--border);margin-bottom:12px;overflow:hidden;transition:border-color .18s;}
 .laz-card.open{border-color:var(--navy);}
@@ -2319,56 +2336,68 @@ const starExamples = [
 ];
 
 function buildInterview() {
-  // Build question sections
+  // Build STAR question cards (similar to Phase 2 card structure)
   const wrap = document.getElementById('interviewSections');
+  let cardIndex = 0;
+  
   iqSections.forEach((sec, si) => {
-    const d = document.createElement('div');
-    d.className = 'iq-section';
-    d.id = 'iqs-'+si;
-    let qHtml = '';
     sec.questions.forEach((q, qi) => {
-      qHtml += `<div class="q-block">
-        <div class="q-num">${q.num}${q.star?' · STAR question':' · Direct question'}</div>
-        <div class="q-text">${q.text}</div>
-        <div class="q-why">Why ask this: ${q.why}</div>
-        <div class="q-probes">
-          <div class="q-probes-title">Probe with these follow-ups</div>
-          ${q.probes.map(p=>`<div class="q-probe">${p}</div>`).join('')}
+      const cardId = 'starCard-' + cardIndex;
+      const ratingId = 'starRating-' + cardIndex;
+      const noteId = 'starNote-' + cardIndex;
+      cardIndex++;
+      
+      const d = document.createElement('div');
+      d.className = 'star-card';
+      d.id = cardId;
+      
+      d.innerHTML = `
+        <div class="star-card-head" onclick="toggleStarCard('${cardId}')">
+          <div class="star-qnum">${q.num}</div>
+          <div style="flex:1;">
+            <div class="star-category">${sec.title}</div>
+            <div class="star-question">"${q.text}"</div>
+          </div>
+          <div class="star-rating-head" id="${ratingId}" onclick="event.stopPropagation()">
+            ${[1,2,3,4,5].map(n=>`<div class="star-dot" onclick="setStarRating('${cardId}',${n})" data-val="${n}" style="opacity:.3;cursor:pointer;font-size:16px;color:var(--gold);transition:opacity .15s;">★</div>`).join('')}
+          </div>
+          <div class="star-chev">›</div>
         </div>
-        <div class="listen-box" style="margin-top:10px;">
-          <div class="listen-title">Listen for</div>
-          ${q.good.map(g=>`<div class="listen-item good">${g}</div>`).join('')}
-          ${q.bad.map(b=>`<div class="listen-item bad">${b}</div>`).join('')}
+        <div class="star-card-body">
+          <div style="margin-bottom:12px;">
+            <div style="font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Why ask this</div>
+            <div style="font-size:13px;color:#555;line-height:1.6;">${q.why}</div>
+          </div>
+          
+          <div style="margin-bottom:12px;">
+            <div style="font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Probe with these follow-ups</div>
+            <div style="display:grid;gap:6px;">
+              ${q.probes.map(p=>`<div style="font-size:13px;color:#555;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:var(--gold);">→</span>${p}</div>`).join('')}
+            </div>
+          </div>
+          
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+            <div style="background:var(--green-light);border-radius:10px;padding:12px 14px;">
+              <div style="font-size:11px;font-weight:700;color:#1a3a28;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">✓ Green signals</div>
+              ${q.good.map(g=>`<div style="font-size:12px;color:#1a3a28;line-height:1.6;">${g}</div>`).join('<div style="margin-top:4px;"></div>')}
+            </div>
+            <div style="background:var(--red-light);border-radius:10px;padding:12px 14px;">
+              <div style="font-size:11px;font-weight:700;color:#4a1010;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">✗ Red signals</div>
+              ${q.bad.map(b=>`<div style="font-size:12px;color:#4a1010;line-height:1.6;">${b}</div>`).join('<div style="margin-top:4px;"></div>')}
+            </div>
+          </div>
+          
+          <div>
+            <div style="font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Your notes on their answer</div>
+            <textarea class="star-note-area" id="${noteId}" placeholder="What did they say? Score 1–5 based on how well they matched green signals..."></textarea>
+          </div>
         </div>
-      </div>`;
+      `;
+      wrap.appendChild(d);
     });
-    d.innerHTML = `
-      <div class="iq-head" onclick="this.closest('.iq-section').classList.toggle('open');this.querySelector('.iq-chev').style.transform=this.closest('.iq-section').classList.contains('open')?'rotate(180deg)':''">
-        <div class="iq-icon ${sec.iconCls}">${sec.icon}</div>
-        <div class="iq-hinfo"><div class="iq-title">${sec.title}</div><div class="iq-sub">${sec.sub}</div></div>
-        <div class="iq-chev">▾</div>
-      </div>
-      <div class="iq-body">${qHtml}</div>
-    `;
-    wrap.appendChild(d);
   });
 
-  // Build scorecard
-  const scWrap = document.getElementById('scorecardRows');
-  scorecardItems.forEach(item => {
-    const row = document.createElement('div');
-    row.className = 'sc-row';
-    row.innerHTML = `
-      <div class="sc-label">${item.label}<br><span class="sc-sub">${item.sub}</span></div>
-      <div class="sc-stars" id="stars-${item.id}">
-        ${[1,2,3,4,5].map(n=>`<div class="sc-star" onclick="setStar('${item.id}',${n})" data-val="${n}">★</div>`).join('')}
-      </div>
-      <div class="sc-score" id="score-${item.id}">0</div>
-    `;
-    scWrap.appendChild(row);
-  });
-
-  // Build STAR examples
+  // Build STAR examples (reference)
   const exWrap = document.getElementById('starExamples');
   starExamples.forEach((ex, i) => {
     const d = document.createElement('div');
@@ -2390,27 +2419,38 @@ function buildInterview() {
   });
 }
 
-// ══════ SCORECARD LOGIC ══════
+// ══════ SCORECARD LOGIC (NEW CARD-BASED) ══════
 const starValues = {};
-scorecardItems.forEach(item => { starValues[item.id] = 0; });
+const starNotes = {};
 
-function setStar(id, val) {
-  // Toggle off if same value clicked
-  if (starValues[id] === val) val = 0;
-  starValues[id] = val;
-  const stars = document.querySelectorAll(`#stars-${id} .sc-star`);
-  stars.forEach(s => {
-    const sv = parseInt(s.dataset.val);
-    s.classList.toggle('lit', sv <= val);
-  });
-  document.getElementById('score-'+id).textContent = val;
-  updateTotal();
+function toggleStarCard(cardId) {
+  const card = document.getElementById(cardId);
+  card.classList.toggle('open');
 }
 
-function updateTotal() {
+function setStarRating(cardId, val) {
+  const card = document.getElementById(cardId);
+  const qNum = card.id.replace('starCard-','');
+  
+  // Toggle off if same value clicked
+  if (starValues[qNum] === val) val = 0;
+  starValues[qNum] = val;
+  
+  // Update star dots
+  const dots = card.querySelectorAll('.star-dot');
+  dots.forEach(dot => {
+    const dv = parseInt(dot.dataset.val);
+    dot.classList.toggle('active', dv <= val);
+    dot.style.opacity = dv <= val ? '1' : '.3';
+  });
+  
+  updateStarTotal();
+}
+
+function updateStarTotal() {
   const total = Object.values(starValues).reduce((a,b)=>a+b,0);
-  document.getElementById('scorecardTotal').textContent = total + ' / 50';
   const el = document.getElementById('scorecardTotal');
+  el.textContent = total + ' / 50';
   el.style.color = total >= 40 ? 'var(--green)' : total >= 30 ? 'var(--gold)' : 'var(--red)';
 }
 
@@ -2434,37 +2474,41 @@ function exportTxt() {
   const total = Object.values(starValues).reduce((a,b)=>a+b,0);
   const candidateName = document.getElementById('candidateName').value || 'Unknown Candidate';
   const notes = document.getElementById('interviewNotes').value;
-  const rows = scorecardItems.map(item => `  ${item.label}: ${starValues[item.id]}/5`).join('\n');
-  const decisionEl = document.querySelector('[id^="dec-"][style*="background:var(--green"]') ||
-                     document.querySelector('[id^="dec-"][style*="background: var(--green"]');
+  
+  // Collect all question ratings and notes
+  let questionsData = '';
+  let qIndex = 0;
+  iqSections.forEach((sec, si) => {
+    sec.questions.forEach((q, qi) => {
+      const rating = starValues[qIndex] || 0;
+      const noteEl = document.getElementById('starNote-' + qIndex);
+      const noteText = noteEl ? noteEl.value.trim() : '';
+      questionsData += `\n  ${q.num} (${sec.title}): ${rating}/5\n    Notes: ${noteText || '(no notes)'}\n`;
+      qIndex++;
+    });
+  });
+  
   const decision = total >= 40 ? '✓ Strong hire' : total >= 30 ? '↗ Train up — potential' : '✗ Pass';
   const text = `TRS SALES REP INTERVIEW SCORECARD
 ${'='.repeat(42)}
 Candidate: ${candidateName}
 Date: ${new Date().toLocaleDateString('en-US',{dateStyle:'long'})}
 
-SCORES:
-${rows}
-
-TOTAL: ${total} / 50
+INTERVIEW SCORE: ${total} / 50
 ${decision}
 
-NOTES:
+QUESTION RATINGS:${questionsData}
+
+OVERALL NOTES:
 ${notes || '(none)'}`;
-  const blob = new Blob([text], {type:'text/plain'});
+
+  const blob = new Blob([text], {type: 'text/plain'});
+  const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  var lazD = getLazExportData();
-  if (lazD && (lazD.alignmentNotes || Object.values(lazD.fitState).some(function(v){return v;}))) {
-    var lazLines = ['','LAZ METHOD PHASE 2 — FIT SUMMARY','='.repeat(42)];
-    Object.keys(lazD.fitState).forEach(function(k){ lazLines.push('  ' + k + ': ' + (lazD.fitState[k]||'—').toUpperCase()); });
-    if (lazD.floorNum) lazLines.push('  Happy number: ' + lazD.floorNum);
-    if (lazD.ceilingNum) lazLines.push('  3-yr goal: ' + lazD.ceilingNum);
-    if (lazD.alignmentNotes) lazLines.push('','Alignment notes:',lazD.alignmentNotes);
-    text += '\n' + lazLines.join('\n');
-  }
-  a.download = `TRS-Scorecard-${candidateName.replace(/\s+/g,'-')}.txt`;
+  a.href = url;
+  a.download = `TRS-Interview-${candidateName.replace(/\s+/g,'-')}-${new Date().toISOString().split('T')[0]}.txt`;
   a.click();
+  URL.revokeObjectURL(url);
 }
 
 function exportPdf() {
@@ -2474,10 +2518,27 @@ function exportPdf() {
   const decision = total >= 40 ? '<span style="color:#1d6b4a;font-weight:700;">✓ Strong hire</span>' :
                    total >= 30 ? '<span style="color:#7a5c00;font-weight:700;">↗ Train up — potential</span>' :
                                  '<span style="color:#8b2020;font-weight:700;">✗ Pass</span>';
+  
+  // Collect question data
+  let questionRows = '';
+  let qIndex = 0;
+  iqSections.forEach((sec, si) => {
+    sec.questions.forEach((q, qi) => {
+      const rating = starValues[qIndex] || 0;
+      const noteEl = document.getElementById('starNote-' + qIndex);
+      const noteText = noteEl ? noteEl.value.trim() : '';
+      questionRows += `<tr><td><strong>${q.num} — ${sec.title}</strong></td><td>"${q.text}"</td><td style="text-align:right;font-weight:600;">${rating} / 5</td></tr>`;
+      if (noteText) {
+        questionRows += `<tr><td colspan="3" style="padding:8px 10px;background:#f9f8f5;font-size:12px;color:#666;"><strong>Notes:</strong> ${noteText}</td></tr>`;
+      }
+      qIndex++;
+    });
+  });
+  
   const win = window.open('', '_blank');
   win.document.write(`<!DOCTYPE html><html><head><title>TRS Interview Scorecard — ${candidateName}</title>
   <style>
-    body{font-family:Arial,sans-serif;padding:32px 40px;max-width:700px;margin:0 auto;color:#1a1a1a;}
+    body{font-family:Arial,sans-serif;padding:32px 40px;max-width:800px;margin:0 auto;color:#1a1a1a;}
     h1{font-size:20px;color:#1a3a5c;border-bottom:2px solid #c8a84b;padding-bottom:8px;margin-bottom:4px;}
     .meta{font-size:12px;color:#666;margin-bottom:20px;}
     table{width:100%;border-collapse:collapse;margin:12px 0;}
@@ -2490,16 +2551,18 @@ function exportPdf() {
   </style></head><body>
   <h1>TRS Sales Rep — Interview Scorecard</h1>
   <div class="meta">Candidate: <strong>${candidateName}</strong> &nbsp;·&nbsp; Date: ${new Date().toLocaleDateString('en-US',{dateStyle:'long'})}</div>
+  <h2>Interview Score & Decision</h2>
+  <div style="font-size:32px;font-weight:700;color:#1a3a5c;margin-bottom:8px;">${total} / 50</div>
+  <div style="font-size:14px;margin-bottom:16px;">${decision}</div>
+  <h2>Question Ratings & Notes</h2>
   <table>
-    <tr><th>Category</th><th>Detail</th><th style="text-align:right;">Score</th></tr>
-    ${scorecardItems.map(item => `<tr><td><strong>${item.label}</strong></td><td style="color:#666;">${item.sub}</td><td style="text-align:right;font-weight:600;">${starValues[item.id]} / 5</td></tr>`).join('')}
-    <tr class="total-row"><td colspan="2">Total</td><td style="text-align:right;">${total} / 50</td></tr>
+    <tr><th>Question</th><th>Ask</th><th style="text-align:right;">Rating</th></tr>
+    ${questionRows}
+    <tr class="total-row"><td colspan="2">Total Interview Score</td><td style="text-align:right;">${total} / 50</td></tr>
   </table>
-  <h2>Decision</h2>
-  <p style="font-size:15px;">${decision}</p>
-  <h2>Interview Notes</h2>
-  <div class="notes-box">${notes || '(none)'}</div>
-  <br><button onclick="window.print()">🖨 Print / Save as PDF</button>
+  <h2>Overall Interview Notes</h2>
+  <div class="notes-box">${notes || '(no notes recorded)'}</div>
+  <button onclick="window.print()" style="margin-top:20px;padding:8px 16px;background:#1a3a5c;color:#c8a84b;border:none;border-radius:6px;cursor:pointer;font-weight:600;">🖨 Print / Save as PDF</button>
   </body></html>`);
   win.document.close();
   win.focus();

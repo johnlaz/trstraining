@@ -498,6 +498,7 @@ body.dark .email-pre{background:#151820;}
     <button class="nav-tab mgr-only" onclick="showView('emails',this)" id="tab-emails" style="display:none;">Emails</button>
     <button class="nav-tab mgr-only" onclick="showView('manager',this)" id="tab-manager" style="display:none;">Manager</button>
     <button class="nav-tab mgr-only" onclick="showView('coaching',this)" id="tab-coaching" style="display:none;">Coaching</button>
+    <button class="nav-tab mgr-only" onclick="showView('prescreen',this)" id="tab-prescreen" style="display:none;">Pre-Screen</button>
     <button class="nav-tab mgr-only" onclick="showView('interview',this)" id="tab-interview" style="display:none;">Interview</button>
     <button class="nav-tab mgr-only" onclick="showView('videos',this)" id="tab-videos" style="display:none;">📹 Videos</button>
   </div>
@@ -665,6 +666,70 @@ body.dark .email-pre{background:#151820;}
 </div>
 
 <!-- ══════════ INTERVIEW VIEW ══════════ -->
+<div id="view-prescreen" class="view">
+  <!-- HEADER -->
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:24px;">
+    <div>
+      <h1 style="font-size:24px;font-weight:600;color:var(--navy);margin:0 0 4px;">Pre-Screen Interview — AV Sales Rep</h1>
+      <p style="font-size:13px;color:var(--muted);margin:0;">Quick validation check · ~15 minutes · Go / No-Go decision</p>
+    </div>
+  </div>
+
+  <!-- CANDIDATE INFO -->
+  <div style="background:var(--white);border-radius:14px;border:1.5px solid var(--border);padding:18px 22px;margin-bottom:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+    <div style="flex:1;min-width:220px;">
+      <div style="font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Candidate name</div>
+      <input id="prescreenCandidateName" type="text" placeholder="e.g. Jane Smith" style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);background:var(--cream);outline:none;transition:border-color .15s;" onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--border)'">
+    </div>
+    <div style="flex:1;min-width:220px;">
+      <div style="font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Pre-Screen Score</div>
+      <div style="font-size:28px;font-weight:600;color:var(--navy);font-family:'DM Mono',monospace;" id="prescreenTotal">0 / 30</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:2px;">20+ = Pass to Phase 1</div>
+    </div>
+  </div>
+
+  <!-- INTERVIEW PITCH -->
+  <div style="background:var(--navy);border-radius:14px;padding:22px 26px;margin-bottom:20px;">
+    <div style="font-size:11px;font-weight:600;color:var(--gold);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;">Opening — set expectations</div>
+    <div style="font-size:15px;color:#f8f6f1;line-height:1.8;font-style:italic;">"Hi [Name]. Thanks for your interest in joining TRS. I've got about 15 minutes to ask some quick questions to make sure this role is a good fit. Sound good?"</div>
+  </div>
+
+  <!-- QUICK REFERENCE BOX -->
+  <div style="background:var(--gold-pale);border-radius:14px;border:1px solid var(--gold-light);padding:18px 22px;margin-bottom:20px;">
+    <div style="font-size:11px;font-weight:600;color:#7a5c00;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Pre-Screen Scoring</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div style="text-align:center;"><div style="font-size:18px;font-weight:700;color:var(--green);font-family:'DM Mono',monospace;">20+</div><div style="font-size:12px;color:#555;margin-top:3px;"><strong>Pass ✓</strong><br>Advance to Phase 1</div></div>
+      <div style="text-align:center;"><div style="font-size:18px;font-weight:700;color:var(--red);font-family:'DM Mono',monospace;">&lt;20</div><div style="font-size:12px;color:#555;margin-top:3px;"><strong>No-Go ✗</strong><br>Not the right fit</div></div>
+    </div>
+    <div style="font-size:13px;color:#666;margin-top:12px;">Each question rates 0-6 (6 possible misalignments, 0 = strong fit). Lower score = better candidate.</div>
+  </div>
+
+  <!-- VALIDATION QUESTION CARDS -->
+  <div id="prescreenSections"></div>
+
+  <!-- SUMMARY & DECISION -->
+  <div style="background:var(--white);border-radius:14px;border:1.5px solid var(--border);padding:22px 24px;margin-top:16px;">
+    <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:16px;letter-spacing:.04em;text-transform:uppercase;font-size:11px;">Pre-Screen Decision</div>
+    <div style="margin-bottom:14px;">
+      <div style="font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Recommendation</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <div id="pdec-pass" onclick="setPrescreenDecision('pass')" style="cursor:pointer;padding:8px 18px;border-radius:30px;border:1.5px solid var(--border);font-size:13px;font-weight:500;color:var(--muted);transition:all .18s;">✓ Pass to Phase 1</div>
+        <div id="pdec-nopass" onclick="setPrescreenDecision('nopass')" style="cursor:pointer;padding:8px 18px;border-radius:30px;border:1.5px solid var(--border);font-size:13px;font-weight:500;color:var(--muted);transition:all .18s;">✗ No-Go</div>
+        <div id="pdec-maybe" onclick="setPrescreenDecision('maybe')" style="cursor:pointer;padding:8px 18px;border-radius:30px;border:1.5px solid var(--border);font-size:13px;font-weight:500;color:var(--muted);transition:all .18s;">↗ Maybe — deeper assessment</div>
+      </div>
+    </div>
+    <div style="margin-bottom:14px;">
+      <div style="font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Key concerns / Notes</div>
+      <textarea id="prescreenNotes" placeholder="Red flags, areas of concern, why they passed or didn't..." style="width:100%;min-height:80px;border:1.5px solid var(--border);border-radius:10px;padding:12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);background:var(--cream);resize:vertical;outline:none;"></textarea>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button onclick="exportPrescreenPdf()" style="padding:9px 18px;border-radius:10px;background:var(--navy);color:var(--gold);font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;">📄 Export PDF</button>
+      <button onclick="exportPrescreenTxt()" style="padding:9px 18px;border-radius:10px;background:var(--white);color:var(--navy);font-size:13px;font-weight:600;border:1.5px solid var(--border);cursor:pointer;font-family:'DM Sans',sans-serif;">📝 Export TXT</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
 <div id="view-interview" class="view">
   <!-- PHASE TOGGLE -->
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:24px;">
@@ -1176,7 +1241,23 @@ body.dark .email-pre{background:#151820;}
 .ford-radio-label{display:flex;align-items:center;gap:7px;font-size:12px;color:#2a1a5c;cursor:pointer;padding:3px 0;line-height:1.4;}
 .ford-radio-label input[type=radio]{accent-color:#7c5cbf;width:14px;height:14px;flex-shrink:0;}
 .ford-radio-label:hover span{color:#5a3a9c;}
-
+/* PRE-SCREEN VALIDATION CARDS */
+.prescreen-card{background:var(--white);border-radius:14px;border:1.5px solid var(--border);margin-bottom:12px;overflow:hidden;transition:border-color .18s;}
+.prescreen-card.open{border-color:var(--navy);}
+.prescreen-card-head{display:flex;align-items:flex-start;gap:12px;padding:16px 18px;cursor:pointer;}
+.prescreen-num{font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:var(--white);background:var(--navy);padding:6px 10px;border-radius:6px;flex-shrink:0;margin-top:2px;}
+.prescreen-category{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;}
+.prescreen-question{font-size:14px;font-weight:600;color:var(--navy);line-height:1.5;}
+.prescreen-score-head{display:flex;gap:8px;align-items:center;flex-shrink:0;margin-top:2px;}
+.prescreen-score-btn{width:32px;height:32px;border-radius:6px;border:1.5px solid var(--border);background:var(--cream);cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--muted);transition:all .15s;}
+.prescreen-score-btn:hover{border-color:var(--navy);}
+.prescreen-score-btn.selected{background:var(--navy);color:var(--gold);border-color:var(--navy);}
+.prescreen-chev{font-size:20px;color:var(--muted);margin-left:8px;flex-shrink:0;transition:transform .2s;line-height:1;margin-top:2px;}
+.prescreen-card.open .prescreen-chev{transform:rotate(90deg);}
+.prescreen-card-body{display:none;border-top:1px solid var(--border);padding:20px 22px;}
+.prescreen-card.open .prescreen-card-body{display:block;}
+.prescreen-note-area{width:100%;min-height:60px;border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);background:var(--cream);resize:vertical;outline:none;transition:border-color .15s;}
+.prescreen-note-area:focus{border-color:var(--navy);}
 
 </style>
 
@@ -2193,6 +2274,47 @@ renderTasks();
 buildEmails();
 buildPlaybook();
 buildCal();
+// ══════ PRE-SCREEN VALIDATION QUESTIONS ══════
+// Scored 0-6 per question (lower is better). 5 questions = max 30 points.
+// 20+ = pass to Phase 1, <20 = no-go
+const prescreenQuestions = [
+  {
+    num:'1', category:'Availability',
+    text:'Our reps work 8:30 AM to 5:00 PM, Monday through Friday, with occasional evening calls 2-3x per month. Can you commit to that schedule?',
+    why:'Not negotiable. Late arrivals and early departures kill team momentum.',
+    scoring:'0=enthusiastic yes | 3=yes but hesitant | 6=has conflicts or unclear',
+    flags:['Mentions needing flexibility during core hours','Can\'t commit to occasional evenings','Vague about schedule']
+  },
+  {
+    num:'2', category:'Call Volume Mindset',
+    text:'You\'ll start Day 1 making phone calls — not following leads, making calls. Does the idea of 30+ outbound calls a day excite you, make you nervous, or is it somewhere in between?',
+    why:'Phone volume isn\'t optional. We need reps who lean in to it, not resist it.',
+    scoring:'0=excited/energized | 3=nervous but willing | 6=visibly uncomfortable or deflecting',
+    flags:['Says they prefer email','Asks if there\'s a way to avoid calls','Shows anxiety without willingness to try']
+  },
+  {
+    num:'3', category:'Rejection Tolerance',
+    text:'On a typical day, you\'ll hear "No" or "Not interested" about 25 times. How have you handled rejection in past work, and what\'s your gut feeling about that volume?',
+    why:'Rejection is the job. Reps who can\'t bounce back from it don\'t make it past Week 1.',
+    scoring:'0=laughs it off, has examples | 3=acknowledges it but unsure | 6=shows frustration or zero examples',
+    flags:['Gets quiet or defensive','Only talks about wins, not losses','Implies they won\'t get rejected much']
+  },
+  {
+    num:'4', category:'Sales Mindset',
+    text:'Tell me about a time you convinced someone to buy something, say yes to something, or do something they weren\'t initially interested in. What was it?',
+    why:'We need evidence they can move a deal. Event planners often manage vendors but don\'t usually sell TO them.',
+    scoring:'0=strong sales example | 3=weak example or vague | 6=no example or "people just liked me"',
+    flags:['Only talks about their job logistics','No evidence of persuasion','Attributes success to luck or charm']
+  },
+  {
+    num:'5', category:'Coachability',
+    text:'Describe a time someone gave you critical feedback or told you that you\'d done something wrong. How did you respond?',
+    why:'We coach hard in Week 1. Reps who get defensive or ignore feedback waste everyone\'s time.',
+    scoring:'0=accepted it, learned from it | 3=took it but defensive | 6=got offended or avoided change',
+    flags:['Blames others','Defensive tone','Says they rarely get feedback']
+  }
+];
+
 // ══════ INTERVIEW QUESTIONS ══════
 const iqSections = [
   {
@@ -2335,6 +2457,205 @@ const starExamples = [
   }
 ];
 
+// ══════ PRE-SCREEN LOGIC ══════
+const prescreenScores = {};
+
+function buildPrescreen() {
+  const wrap = document.getElementById('prescreenSections');
+  let cardIndex = 0;
+  
+  prescreenQuestions.forEach((q, qi) => {
+    const cardId = 'psCard-' + cardIndex;
+    const noteId = 'psNote-' + cardIndex;
+    prescreenScores[cardIndex] = 0;
+    cardIndex++;
+    
+    const d = document.createElement('div');
+    d.className = 'prescreen-card';
+    d.id = cardId;
+    
+    d.innerHTML = `
+      <div class="prescreen-card-head" onclick="togglePrescreenCard('${cardId}')">
+        <div class="prescreen-num">${q.num}</div>
+        <div style="flex:1;">
+          <div class="prescreen-category">${q.category}</div>
+          <div class="prescreen-question">${q.text}</div>
+        </div>
+        <div class="prescreen-score-head" onclick="event.stopPropagation()">
+          ${[0,3,6].map(n=>`<button class="prescreen-score-btn" onclick="setPrescreenScore('${cardId}',${n})" data-val="${n}">
+            ${n === 0 ? '✓' : n === 3 ? '~' : '✗'}
+          </button>`).join('')}
+        </div>
+        <div class="prescreen-chev">›</div>
+      </div>
+      <div class="prescreen-card-body">
+        <div style="margin-bottom:12px;">
+          <div style="font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Why this matters</div>
+          <div style="font-size:13px;color:#555;line-height:1.6;">${q.why}</div>
+        </div>
+        
+        <div style="margin-bottom:12px;">
+          <div style="font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Scoring</div>
+          <div style="font-size:13px;color:#555;line-height:1.6;">${q.scoring}</div>
+        </div>
+        
+        <div style="background:var(--red-light);border-radius:10px;padding:12px 14px;margin-bottom:12px;">
+          <div style="font-size:11px;font-weight:700;color:#4a1010;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">⚠️ Red flags in their answer</div>
+          ${q.flags.map(f=>`<div style="font-size:12px;color:#4a1010;line-height:1.6;">• ${f}</div>`).join('')}
+        </div>
+        
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Your notes</div>
+          <textarea class="prescreen-note-area" id="${noteId}" placeholder="What did they say? Why did you score them this way?"></textarea>
+        </div>
+      </div>
+    `;
+    wrap.appendChild(d);
+  });
+}
+
+function togglePrescreenCard(cardId) {
+  const card = document.getElementById(cardId);
+  card.classList.toggle('open');
+}
+
+function setPrescreenScore(cardId, val) {
+  const card = document.getElementById(cardId);
+  const qNum = card.id.replace('psCard-','');
+  prescreenScores[qNum] = val;
+  
+  // Update button states
+  const buttons = card.querySelectorAll('.prescreen-score-btn');
+  buttons.forEach(btn => {
+    const bv = parseInt(btn.dataset.val);
+    btn.classList.toggle('selected', bv === val);
+  });
+  
+  updatePrescreenTotal();
+}
+
+function updatePrescreenTotal() {
+  const total = Object.values(prescreenScores).reduce((a,b)=>a+b,0);
+  const el = document.getElementById('prescreenTotal');
+  el.textContent = total + ' / 30';
+  el.style.color = total < 20 ? 'var(--red)' : total < 25 ? 'var(--gold)' : 'var(--green)';
+}
+
+function setPrescreenDecision(d) {
+  ['pass','nopass','maybe'].forEach(k => {
+    const el = document.getElementById('pdec-'+k);
+    el.style.background = 'var(--white)';
+    el.style.color = 'var(--muted)';
+    el.style.borderColor = 'var(--border)';
+  });
+  const colors = { 
+    pass:['var(--green-light)','var(--green)','#a8d5bf'], 
+    nopass:['var(--red-light)','var(--red)','#e5b5b5'], 
+    maybe:['var(--gold-pale)','#7a5c00','var(--gold)'] 
+  };
+  const [bg,color,border] = colors[d];
+  const el = document.getElementById('pdec-'+d);
+  el.style.background = bg;
+  el.style.color = color;
+  el.style.borderColor = border;
+}
+
+function exportPrescreenPdf() {
+  const total = Object.values(prescreenScores).reduce((a,b)=>a+b,0);
+  const candidateName = document.getElementById('prescreenCandidateName').value || 'Unknown Candidate';
+  const notes = document.getElementById('prescreenNotes').value;
+  const decision = total < 20 ? '<span style="color:#8b2020;font-weight:700;">✗ No-Go</span>' :
+                   total < 25 ? '<span style="color:#7a5c00;font-weight:700;">↗ Maybe</span>' :
+                                '<span style="color:#1d6b4a;font-weight:700;">✓ Pass to Phase 1</span>';
+  
+  let questionRows = '';
+  prescreenQuestions.forEach((q, qi) => {
+    const score = prescreenScores[qi] || 0;
+    const noteEl = document.getElementById('psNote-' + qi);
+    const noteText = noteEl ? noteEl.value.trim() : '';
+    
+    const scoreText = score === 0 ? 'Strong ✓' : score === 3 ? 'Uncertain ~' : 'Weak ✗';
+    questionRows += `<tr><td style="width:60%;"><strong>${q.num}. ${q.category}</strong></td><td>${scoreText}</td><td style="text-align:right;font-weight:600;">${score}</td></tr>`;
+    
+    if (noteText) {
+      questionRows += `<tr><td colspan="3" style="background:#f9f8f5;color:#666;"><strong>Notes:</strong> ${noteText}</td></tr>`;
+    }
+  });
+  
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html><head><title>TRS Pre-Screen — ${candidateName}</title>
+  <style>
+    body{font-family:Arial,sans-serif;padding:32px 40px;max-width:700px;margin:0 auto;color:#1a1a1a;}
+    h1{font-size:20px;color:#1a3a5c;border-bottom:2px solid #c8a84b;padding-bottom:8px;margin-bottom:4px;}
+    h2{font-size:12px;color:#1a3a5c;text-transform:uppercase;letter-spacing:.05em;margin:18px 0 6px;}
+    .meta{font-size:12px;color:#666;margin-bottom:20px;}
+    table{width:100%;border-collapse:collapse;margin:12px 0;}
+    th{background:#1a3a5c;color:#c8a84b;font-size:11px;text-align:left;padding:8px 10px;text-transform:uppercase;}
+    td{padding:8px 10px;border-bottom:1px solid #eee;font-size:13px;}
+    .total-row td{font-weight:700;font-size:15px;color:#1a3a5c;border-top:2px solid #c8a84b;}
+    .notes-box{background:#f5f2eb;padding:12px;border-radius:6px;font-size:13px;line-height:1.7;white-space:pre-wrap;}
+    @media print{button{display:none;}}
+  </style></head><body>
+  <h1>TRS Pre-Screen Interview</h1>
+  <div class="meta">Candidate: <strong>${candidateName}</strong> · Date: ${new Date().toLocaleDateString('en-US',{dateStyle:'long'})}</div>
+  <h2>Pre-Screen Result</h2>
+  <div style="font-size:32px;font-weight:700;color:#1a3a5c;margin-bottom:8px;">${total} / 30</div>
+  <div style="font-size:14px;margin-bottom:16px;">${decision}</div>
+  <h2>Validation Questions</h2>
+  <table>
+    <tr><th>Question</th><th>Rating</th><th style="text-align:right;width:60px;">Score</th></tr>
+    ${questionRows}
+    <tr class="total-row"><td>Total Pre-Screen Score</td><td colspan="2" style="text-align:right;">${total} / 30</td></tr>
+  </table>
+  <h2>Key Concerns & Notes</h2>
+  <div class="notes-box">${notes || '(none recorded)'}</div>
+  <br><button onclick="window.print()" style="padding:8px 16px;background:#1a3a5c;color:#c8a84b;border:none;border-radius:6px;cursor:pointer;font-weight:600;">🖨 Print / Save as PDF</button>
+  </body></html>`);
+  win.document.close();
+  win.focus();
+}
+
+function exportPrescreenTxt() {
+  const total = Object.values(prescreenScores).reduce((a,b)=>a+b,0);
+  const candidateName = document.getElementById('prescreenCandidateName').value || 'Unknown Candidate';
+  const notes = document.getElementById('prescreenNotes').value;
+  
+  let questionsData = '';
+  prescreenQuestions.forEach((q, qi) => {
+    const score = prescreenScores[qi] || 0;
+    const noteEl = document.getElementById('psNote-' + qi);
+    const noteText = noteEl ? noteEl.value.trim() : '';
+    const scoreText = score === 0 ? 'Strong' : score === 3 ? 'Uncertain' : 'Weak';
+    questionsData += `\n  ${q.num}. ${q.category}: ${scoreText} (${score}/6)\n    Notes: ${noteText || '(none)'}\n`;
+  });
+  
+  const decision = total < 20 ? '✗ No-Go (do not advance)' : 
+                   total < 25 ? '↗ Maybe (marginal, deeper assessment needed)' : 
+                                '✓ Pass to Phase 1 (advance to full interview)';
+  
+  const text = `TRS PRE-SCREEN INTERVIEW
+${'='.repeat(42)}
+Candidate: ${candidateName}
+Date: ${new Date().toLocaleDateString('en-US',{dateStyle:'long'})}
+
+PRE-SCREEN SCORE: ${total} / 30
+${decision}
+
+VALIDATION QUESTIONS:${questionsData}
+
+KEY CONCERNS / NOTES:
+${notes || '(none)'}`;
+
+  const blob = new Blob([text], {type: 'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `TRS-PreScreen-${candidateName.replace(/\s+/g,'-')}-${new Date().toISOString().split('T')[0]}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ══════ INTERVIEW LOGIC ══════
 function buildInterview() {
   // Build STAR question cards (similar to Phase 2 card structure)
   const wrap = document.getElementById('interviewSections');
@@ -3170,6 +3491,7 @@ function updateFordMatrix() {
   if (lbl) { lbl.textContent = label; lbl.style.color = color; }
 }
 
+buildPrescreen();
 buildInterview();
 
 function buildVideoManager() {
@@ -3885,7 +4207,7 @@ updateSectionBadges();
 // Deep link — only honour if role allows
 function handleDeepLink() {
   const hash = location.hash.replace('#','');
-  const mgrOnly = ['manager','coaching','interview','videos'];
+  const mgrOnly = ['manager','coaching','prescreen','interview','videos'];
   if (hash && !(mgrOnly.includes(hash) && currentRole !== 'manager')) {
     const tab = document.querySelector(`[onclick*="showView('${hash}'"]`);
     if (tab) showView(hash, tab);

@@ -416,7 +416,7 @@ body.dark .email-pre{background:#151820;}
 <body><!-- ONLOAD MODAL -->
 <div class="onload-overlay" id="onloadOverlay">
   <div class="onload-modal">
-    <div class="onload-logo">TRS</div>
+    <div class="onload-logo" id="onloadLogo" onclick="devTripleClick()" style="cursor:pointer;" title="">TRS</div>
     <h2>Welcome to TRS Training</h2>
     <p>Enter your name so reports and exports are labeled correctly.</p>
     <input class="onload-input" id="onloadName" type="text" placeholder="Your full name" autocomplete="name">
@@ -482,7 +482,7 @@ body.dark .email-pre{background:#151820;}
 
 <nav>
   <div class="nav-brand">
-    <div class="nav-logo">TRS</div>
+    <div class="nav-logo" id="navLogo" onclick="devTripleClick()" title="">TRS</div>
     <span class="nav-title">New Hire Training</span>
   </div>
   <div class="nav-search-wrap">
@@ -500,6 +500,7 @@ body.dark .email-pre{background:#151820;}
     <button class="nav-tab mgr-only" onclick="showView('coaching',this)" id="tab-coaching" style="display:none;">Coaching</button>
     <button class="nav-tab mgr-only" onclick="showView('prescreen',this)" id="tab-prescreen" style="display:none;">Pre-Screen</button>
     <button class="nav-tab mgr-only" onclick="showView('interview',this)" id="tab-interview" style="display:none;">Interview</button>
+    <button class="nav-tab mgr-only" onclick="showView('onboarding',this)" id="tab-onboarding" style="display:none;">Onboarding</button>
     <button class="nav-tab mgr-only" onclick="showView('videos',this)" id="tab-videos" style="display:none;">📹 Videos</button>
   </div>
   <div style="display:flex;align-items:center;gap:6px;">
@@ -1260,6 +1261,318 @@ body.dark .email-pre{background:#151820;}
 .prescreen-note-area:focus{border-color:var(--navy);}
 
 </style>
+
+<!-- ══════════ ONBOARDING VIEW ══════════ -->
+<style>
+/* ── Onboarding layout ── */
+.ob-layout{display:grid;grid-template-columns:220px 1fr;gap:20px;align-items:flex-start;}
+@media(max-width:820px){.ob-layout{grid-template-columns:1fr;}}
+
+/* ── Step sidebar ── */
+.ob-sidebar{background:var(--white);border-radius:14px;border:1.5px solid var(--border);overflow:hidden;position:sticky;top:70px;}
+.ob-sidebar-head{background:var(--navy);padding:14px 16px;}
+.ob-sidebar-title{font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;}
+.ob-sidebar-name{font-size:14px;font-weight:600;color:#f8f6f1;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ob-step{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.ob-step:last-child{border-bottom:none;}
+.ob-step.active-step{background:rgba(200,168,75,.10);}
+.ob-step.locked{opacity:.45;cursor:not-allowed;}
+.ob-step-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;font-weight:700;font-family:'DM Mono',monospace;}
+.ob-step-icon.done{background:var(--green-light);color:var(--green);}
+.ob-step-icon.current{background:rgba(200,168,75,.2);color:var(--gold);border:2px solid var(--gold);}
+.ob-step-icon.pending{background:var(--cream);color:var(--muted);border:1.5px solid var(--border);}
+.ob-step-label{font-size:13px;font-weight:600;color:var(--navy);line-height:1.3;}
+.ob-step-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+
+/* ── Main content panels ── */
+.ob-panel{display:none;}
+.ob-panel.ob-active{display:block;}
+.ob-card{background:var(--white);border-radius:14px;border:1.5px solid var(--border);padding:22px 24px;margin-bottom:16px;}
+.ob-card-title{font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;}
+
+/* ── Doc status grid ── */
+.doc-grid{width:100%;border-collapse:collapse;}
+.doc-grid th{background:var(--navy);color:var(--gold);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:9px 12px;text-align:left;}
+.doc-grid td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+.doc-grid tr:last-child td{border-bottom:none;}
+.doc-grid tr:hover td{background:var(--cream);}
+.doc-status-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;}
+.doc-status-badge.signed{background:var(--green-light);color:var(--green);}
+.doc-status-badge.pending{background:var(--gold-light);color:#7a5c00;}
+.doc-status-badge.missing{background:var(--red-light);color:var(--red);}
+.doc-status-badge.received{background:var(--green-light);color:var(--green);}
+.doc-action-btn{padding:5px 12px;border-radius:7px;font-size:12px;font-weight:600;border:1.5px solid var(--border);background:var(--white);color:var(--navy);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;}
+.doc-action-btn:hover{background:var(--cream);border-color:var(--navy);}
+.doc-action-btn.primary{background:var(--navy);color:var(--gold);border-color:var(--navy);}
+.doc-action-btn.primary:hover{background:var(--navy-dark);}
+.doc-action-btn.danger{color:var(--red);border-color:var(--red-light);}
+
+/* ── Sign-off modal ── */
+.ob-modal-overlay{display:none;position:fixed;inset:0;z-index:3000;background:rgba(10,15,30,.78);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px;}
+.ob-modal-overlay.open{display:flex;}
+.ob-modal{background:var(--white);border-radius:18px;padding:32px 34px;max-width:460px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35);}
+.ob-modal h3{font-size:18px;font-weight:700;color:var(--navy);margin-bottom:6px;}
+.ob-modal p{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;}
+.ob-modal-input{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;font-size:15px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--cream);outline:none;transition:border-color .15s;margin-bottom:8px;}
+.ob-modal-input:focus{border-color:var(--navy);}
+.ob-modal-meta{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;background:var(--cream);border-radius:8px;padding:8px 12px;margin-bottom:18px;line-height:1.8;}
+.ob-modal-btns{display:flex;gap:10px;}
+.ob-modal-btns button{flex:1;padding:11px;border-radius:10px;font-size:14px;font-weight:600;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.ob-modal-confirm{background:var(--navy);color:var(--gold);}
+.ob-modal-cancel{background:var(--cream);color:var(--muted);border:1.5px solid var(--border)!important;}
+
+/* ── Audit trail badge ── */
+.audit-trail{background:var(--gold-pale);border:1.5px solid var(--gold-light);border-radius:10px;padding:13px 16px;font-size:12px;font-family:'DM Mono',monospace;color:#5a4a1a;line-height:2;margin-top:14px;}
+.audit-trail strong{color:var(--navy);}
+
+/* ── Progress bar (finalize) ── */
+.ob-progress-wrap{background:var(--border);border-radius:6px;height:10px;margin:10px 0 5px;}
+.ob-progress-bar{height:10px;border-radius:6px;background:var(--green);transition:width .4s;}
+
+/* ── Step nav buttons ── */
+.ob-step-nav{display:flex;gap:10px;margin-top:6px;}
+</style>
+
+<div id="view-onboarding" class="view">
+  <div class="page-header">
+    <h1>Onboarding</h1>
+    <p>Manage offer documents, collect signatures, verify uploads, and finalize the hire package — all in one place.</p>
+  </div>
+
+  <!-- TOP BAR: candidate entry + import -->
+  <div style="background:var(--navy);border-radius:14px;padding:18px 22px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+    <div style="flex:1;min-width:200px;">
+      <div style="font-size:11px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">Candidate</div>
+      <input id="obCandidateName" type="text" placeholder="Full name" oninput="obSyncName()"
+        style="width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:8px 12px;font-size:14px;color:#f8f6f1;font-family:'DM Sans',sans-serif;outline:none;">
+    </div>
+    <div style="flex:1;min-width:200px;">
+      <div style="font-size:11px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">Start Date</div>
+      <input id="obStartDate" type="date"
+        style="width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:8px 12px;font-size:14px;color:#f8f6f1;font-family:'DM Sans',sans-serif;outline:none;">
+    </div>
+    <div style="flex:1;min-width:200px;">
+      <div style="font-size:11px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">Role / Position</div>
+      <input id="obRole" type="text" placeholder="e.g. AV Sales Rep"
+        style="width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:8px 12px;font-size:14px;color:#f8f6f1;font-family:'DM Sans',sans-serif;outline:none;">
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <button onclick="obImportSession()" style="padding:9px 16px;border-radius:10px;background:var(--gold);color:var(--navy);font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;">⬆ Import session</button>
+      <button onclick="obReset()" style="padding:7px 16px;border-radius:10px;background:transparent;color:rgba(248,246,241,.45);font-size:12px;font-weight:600;border:1.5px solid rgba(255,255,255,.18);cursor:pointer;font-family:'DM Sans',sans-serif;">✕ Clear</button>
+    </div>
+  </div>
+
+  <!-- TWO-COLUMN LAYOUT -->
+  <div class="ob-layout">
+
+    <!-- LEFT: Step sidebar -->
+    <div class="ob-sidebar">
+      <div class="ob-sidebar-head">
+        <div class="ob-sidebar-title">Hire Pipeline</div>
+        <div class="ob-sidebar-name" id="obSidebarName">No candidate</div>
+      </div>
+      <div class="ob-step active-step" onclick="obGoStep(0)" id="ob-step-0">
+        <div class="ob-step-icon current" id="ob-step-icon-0">1</div>
+        <div><div class="ob-step-label">Review &amp; Sign Offer</div><div class="ob-step-sub">Offer letter + sign-off</div></div>
+      </div>
+      <div class="ob-step locked" onclick="obGoStep(1)" id="ob-step-1">
+        <div class="ob-step-icon pending" id="ob-step-icon-1">2</div>
+        <div><div class="ob-step-label">Legal Disclosures</div><div class="ob-step-sub">Non-Compete &amp; policies</div></div>
+      </div>
+      <div class="ob-step locked" onclick="obGoStep(2)" id="ob-step-2">
+        <div class="ob-step-icon pending" id="ob-step-icon-2">3</div>
+        <div><div class="ob-step-label">Upload Documents</div><div class="ob-step-sub">ID, tax forms, I-9</div></div>
+      </div>
+      <div class="ob-step locked" onclick="obGoStep(3)" id="ob-step-3">
+        <div class="ob-step-icon pending" id="ob-step-icon-3">4</div>
+        <div><div class="ob-step-label">Final Review</div><div class="ob-step-sub">Completeness check</div></div>
+      </div>
+      <div class="ob-step locked" onclick="obGoStep(4)" id="ob-step-4">
+        <div class="ob-step-icon pending" id="ob-step-icon-4">5</div>
+        <div><div class="ob-step-label">Finalize &amp; Archive</div><div class="ob-step-sub">Export hire package</div></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Step panels -->
+    <div>
+
+      <!-- ── STEP 1: Offer Letter ── -->
+      <div class="ob-panel ob-active" id="ob-panel-0">
+        <div class="ob-card">
+          <div class="ob-card-title">Step 1 — Offer Letter</div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;">Review the offer details below, then collect the candidate's typed signature. This creates a timestamped audit record for your files.</p>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+            <div>
+              <label style="font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:5px;">Base Salary / Rate</label>
+              <input id="obSalary" type="text" placeholder="e.g. $45,000 / year" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 11px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--cream);outline:none;">
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:5px;">Commission / Bonus Structure</label>
+              <input id="obCommission" type="text" placeholder="e.g. 8% on closed deals" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 11px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--cream);outline:none;">
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:5px;">Reporting Manager</label>
+              <input id="obManager" type="text" placeholder="Manager name" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 11px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--cream);outline:none;">
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:5px;">Work Location</label>
+              <input id="obLocation" type="text" placeholder="e.g. Orlando, FL / Remote" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 11px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--cream);outline:none;">
+            </div>
+          </div>
+
+          <div>
+            <label style="font-size:11px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:5px;">Additional Offer Notes</label>
+            <textarea id="obOfferNotes" rows="3" placeholder="Probationary period, benefits start date, equipment provided, etc." style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 11px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--cream);outline:none;resize:vertical;"></textarea>
+          </div>
+
+          <!-- Signature status -->
+          <div id="ob-offer-unsigned" style="margin-top:16px;">
+            <button onclick="openObSignModal('offer')" class="doc-action-btn primary">✍ Collect Signature</button>
+            <span style="font-size:12px;color:var(--muted);margin-left:10px;">No signature recorded yet</span>
+          </div>
+          <div id="ob-offer-signed" style="display:none;margin-top:14px;">
+            <div class="audit-trail" id="ob-offer-audit"></div>
+            <div class="ob-step-nav">
+              <button onclick="obAdvance(0)" class="doc-action-btn primary">Continue to Step 2 →</button>
+              <button onclick="obPrintOfferLetter()" class="doc-action-btn">🖨 Print Offer Letter</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STEP 2: Legal Disclosures ── -->
+      <div class="ob-panel" id="ob-panel-1">
+        <div class="ob-card">
+          <div class="ob-card-title">Step 2 — Legal Disclosures</div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;">Candidate reviews and acknowledges each policy. Each item requires a separate sign-off.</p>
+
+          <table class="doc-grid" style="margin-bottom:16px;">
+            <thead><tr><th>Document</th><th>Source</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Non-Compete Agreement</strong><div style="font-size:11px;color:var(--muted);">12-month restriction, 50-mile radius</div></td>
+                <td><span style="font-size:11px;color:var(--muted);">System</span></td>
+                <td id="ob-noncompete-status"><span class="doc-status-badge pending">⏳ Pending</span></td>
+                <td><button onclick="openObSignModal('noncompete')" class="doc-action-btn" id="ob-noncompete-btn">Sign</button></td>
+              </tr>
+              <tr>
+                <td><strong>At-Will Employment Acknowledgment</strong><div style="font-size:11px;color:var(--muted);">Confirms employment is at-will</div></td>
+                <td><span style="font-size:11px;color:var(--muted);">System</span></td>
+                <td id="ob-atwill-status"><span class="doc-status-badge pending">⏳ Pending</span></td>
+                <td><button onclick="openObSignModal('atwill')" class="doc-action-btn" id="ob-atwill-btn">Sign</button></td>
+              </tr>
+              <tr>
+                <td><strong>Confidentiality / NDA</strong><div style="font-size:11px;color:var(--muted);">Protects client lists, pricing, and IP</div></td>
+                <td><span style="font-size:11px;color:var(--muted);">System</span></td>
+                <td id="ob-nda-status"><span class="doc-status-badge pending">⏳ Pending</span></td>
+                <td><button onclick="openObSignModal('nda')" class="doc-action-btn" id="ob-nda-btn">Sign</button></td>
+              </tr>
+              <tr>
+                <td><strong>Code of Conduct</strong><div style="font-size:11px;color:var(--muted);">Attendance, communication, CRM usage</div></td>
+                <td><span style="font-size:11px;color:var(--muted);">System</span></td>
+                <td id="ob-conduct-status"><span class="doc-status-badge pending">⏳ Pending</span></td>
+                <td><button onclick="openObSignModal('conduct')" class="doc-action-btn" id="ob-conduct-btn">Sign</button></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div id="ob-legal-incomplete" style="font-size:12px;color:var(--muted);">All four documents must be signed to continue.</div>
+          <div id="ob-legal-complete" style="display:none;">
+            <div class="ob-step-nav">
+              <button onclick="obAdvance(1)" class="doc-action-btn primary">Continue to Step 3 →</button>
+              <button onclick="obPrintLegalPackage()" class="doc-action-btn">🖨 Print Legal Package</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STEP 3: Document Uploads ── -->
+      <div class="ob-panel" id="ob-panel-2">
+        <div class="ob-card">
+          <div class="ob-card-title">Step 3 — Upload Documents</div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;">Candidate supplies required verification documents. Images (JPG, PNG) are automatically converted to PDF before packaging.</p>
+
+          <table class="doc-grid" style="margin-bottom:16px;">
+            <thead><tr><th>Document</th><th>Source</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="ob-upload-rows">
+              <!-- rendered by JS -->
+            </tbody>
+          </table>
+
+          <div id="ob-uploads-incomplete" style="font-size:12px;color:var(--muted);">Required documents must be uploaded to continue.</div>
+          <div id="ob-uploads-complete" style="display:none;">
+            <div class="ob-step-nav">
+              <button onclick="obAdvance(2)" class="doc-action-btn primary">Continue to Step 4 →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STEP 4: Final Review ── -->
+      <div class="ob-panel" id="ob-panel-3">
+        <div class="ob-card">
+          <div class="ob-card-title">Step 4 — Final Review</div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;">Complete checklist before marking this hire as active. Every item below must be confirmed.</p>
+
+          <div id="ob-review-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px;">
+            <!-- rendered by JS -->
+          </div>
+
+          <div id="ob-review-incomplete" style="font-size:12px;color:var(--muted);">Check off all items to proceed.</div>
+          <div id="ob-review-complete" style="display:none;">
+            <div class="ob-step-nav">
+              <button onclick="obAdvance(3)" class="doc-action-btn primary">Mark Ready — Proceed to Archive →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STEP 5: Finalize & Archive ── -->
+      <div class="ob-panel" id="ob-panel-4">
+        <div class="ob-card">
+          <div class="ob-card-title">Step 5 — Finalize &amp; Archive</div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.6;">All steps complete. Export the full onboarding package — signatures, uploaded documents, and a summary PDF — as a single zip file. Candidate is then flagged as <strong>Active</strong>.</p>
+
+          <!-- Completeness summary -->
+          <div style="background:var(--cream);border-radius:10px;padding:16px 18px;margin-bottom:18px;">
+            <div style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;">Package Contents</div>
+            <div id="ob-package-list" style="font-size:13px;color:#444;line-height:2.2;"></div>
+          </div>
+
+          <div class="ob-progress-wrap"><div class="ob-progress-bar" id="ob-final-bar" style="width:0%"></div></div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:18px;" id="ob-final-bar-label">Ready to export</div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button onclick="obPrintFullPackage()" class="doc-action-btn primary">🖨 Print Full Hire Package</button>
+            <button onclick="obExportSummaryPdf()" class="doc-action-btn">📄 Summary PDF Only</button>
+            <button onclick="obExportZip()" style="padding:9px 20px;border-radius:10px;background:var(--green);color:#fff;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;">📦 Finalize &amp; Download Zip</button>
+          </div>
+
+          <div id="ob-finalized-badge" style="display:none;margin-top:18px;background:var(--green-light);border:1.5px solid var(--green);border-radius:10px;padding:14px 18px;font-size:13px;color:var(--green);font-weight:600;">
+            ✓ Hire package exported &amp; candidate marked Active. File is saved.
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end right col -->
+  </div><!-- end ob-layout -->
+</div>
+<!-- end view-onboarding -->
+
+<!-- ── Sign-off Modal ── -->
+<div class="ob-modal-overlay" id="obSignModal">
+  <div class="ob-modal">
+    <h3 id="obSignModalTitle">Sign Document</h3>
+    <p id="obSignModalDesc">Type your full legal name below to acknowledge and sign this document. This creates a timestamped audit record.</p>
+    <input class="ob-modal-input" id="obSignName" type="text" placeholder="Full legal name" autocomplete="off">
+    <div class="ob-modal-meta" id="obSignMeta"></div>
+    <div class="ob-modal-btns">
+      <button class="ob-modal-cancel" onclick="closeObSignModal()">Cancel</button>
+      <button class="ob-modal-confirm" onclick="confirmObSign()">✍ Confirm Signature</button>
+    </div>
+  </div>
+</div>
 
 <!-- ══════════ VIDEO MANAGER VIEW ══════════ -->
 <div id="view-videos" class="view">
@@ -2564,52 +2877,170 @@ function exportPrescreenPdf() {
   const total = Object.values(prescreenScores).reduce((a,b)=>a+b,0);
   const candidateName = document.getElementById('prescreenCandidateName').value || 'Unknown Candidate';
   const notes = document.getElementById('prescreenNotes').value;
-  const decision = total < 20 ? '<span style="color:#8b2020;font-weight:700;">✗ No-Go</span>' :
-                   total < 25 ? '<span style="color:#7a5c00;font-weight:700;">↗ Maybe</span>' :
-                                '<span style="color:#1d6b4a;font-weight:700;">✓ Pass to Phase 1</span>';
-  
-  let questionRows = '';
+
+  const decisionLabel = total < 20 ? '✗ No-Go — Do Not Advance' :
+                        total < 25 ? '↗ Maybe — Marginal, Deeper Assessment Needed' :
+                                     '✓ Pass — Advance to Phase 1 Interview';
+  const decisionColor = total < 20 ? '#8b2020' : total < 25 ? '#7a5c00' : '#1d6b4a';
+  const decisionBg    = total < 20 ? '#f5dada'  : total < 25 ? '#fdf6e0'  : '#d4ede3';
+
+  // Scoring guide parsed from q.scoring string (format: "0=label | 3=label | 6=label")
+  function parseScoringGuide(scoringStr) {
+    return scoringStr.split('|').map(s => s.trim()).map(part => {
+      const [score, ...rest] = part.split('=');
+      return `<span class="score-chip score-${score.trim()}">${score.trim()} pts</span> ${rest.join('=').trim()}`;
+    }).join('&nbsp;&nbsp;');
+  }
+
+  let questionBlocks = '';
   prescreenQuestions.forEach((q, qi) => {
     const score = prescreenScores[qi] || 0;
     const noteEl = document.getElementById('psNote-' + qi);
     const noteText = noteEl ? noteEl.value.trim() : '';
-    
     const scoreText = score === 0 ? 'Strong ✓' : score === 3 ? 'Uncertain ~' : 'Weak ✗';
-    questionRows += `<tr><td style="width:60%;"><strong>${q.num}. ${q.category}</strong></td><td>${scoreText}</td><td style="text-align:right;font-weight:600;">${score}</td></tr>`;
-    
-    if (noteText) {
-      questionRows += `<tr><td colspan="3" style="background:#f9f8f5;color:#666;"><strong>Notes:</strong> ${noteText}</td></tr>`;
-    }
+    const scoreBg   = score === 0 ? '#d4ede3'  : score === 3 ? '#fdf6e0'   : '#f5dada';
+    const scoreClr  = score === 0 ? '#1d6b4a'  : score === 3 ? '#7a5c00'   : '#8b2020';
+
+    const flagsList = (q.flags || []).map(f => `<li>${f}</li>`).join('');
+
+    questionBlocks += `
+    <div class="q-block">
+      <div class="q-header">
+        <div class="q-left">
+          <span class="q-num">${q.num}</span>
+          <div>
+            <div class="q-category">${q.category}</div>
+            <div class="q-text">"${q.text}"</div>
+          </div>
+        </div>
+        <div class="q-score-badge" style="background:${scoreBg};color:${scoreClr};">
+          <div class="q-score-num">${score}/6</div>
+          <div class="q-score-label">${scoreText}</div>
+        </div>
+      </div>
+
+      <div class="q-why"><span class="pill pill-why">Why we ask this</span> ${q.why}</div>
+
+      <div class="q-scoring-row"><span class="pill pill-scoring">Scoring guide</span> ${parseScoringGuide(q.scoring)}</div>
+
+      ${flagsList ? `<div class="q-flags"><span class="pill pill-flags">Red flags</span><ul class="flag-list">${flagsList}</ul></div>` : ''}
+
+      <div class="q-notes-row">
+        <span class="pill pill-notes">Interviewer notes</span>
+        <div class="q-notes-box">${noteText || '<span style="color:#aaa;font-style:italic;">No notes recorded</span>'}</div>
+      </div>
+    </div>`;
   });
-  
+
+  const scorePercent = Math.round((total / 30) * 100);
+
   const win = window.open('', '_blank');
   win.document.write(`<!DOCTYPE html><html><head><title>TRS Pre-Screen — ${candidateName}</title>
   <style>
-    body{font-family:Arial,sans-serif;padding:32px 40px;max-width:700px;margin:0 auto;color:#1a1a1a;}
-    h1{font-size:20px;color:#1a3a5c;border-bottom:2px solid #c8a84b;padding-bottom:8px;margin-bottom:4px;}
-    h2{font-size:12px;color:#1a3a5c;text-transform:uppercase;letter-spacing:.05em;margin:18px 0 6px;}
-    .meta{font-size:12px;color:#666;margin-bottom:20px;}
-    table{width:100%;border-collapse:collapse;margin:12px 0;}
-    th{background:#1a3a5c;color:#c8a84b;font-size:11px;text-align:left;padding:8px 10px;text-transform:uppercase;}
-    td{padding:8px 10px;border-bottom:1px solid #eee;font-size:13px;}
-    .total-row td{font-weight:700;font-size:15px;color:#1a3a5c;border-top:2px solid #c8a84b;}
-    .notes-box{background:#f5f2eb;padding:12px;border-radius:6px;font-size:13px;line-height:1.7;white-space:pre-wrap;}
-    @media print{button{display:none;}}
-  </style></head><body>
-  <h1>TRS Pre-Screen Interview</h1>
-  <div class="meta">Candidate: <strong>${candidateName}</strong> · Date: ${new Date().toLocaleDateString('en-US',{dateStyle:'long'})}</div>
-  <h2>Pre-Screen Result</h2>
-  <div style="font-size:32px;font-weight:700;color:#1a3a5c;margin-bottom:8px;">${total} / 30</div>
-  <div style="font-size:14px;margin-bottom:16px;">${decision}</div>
-  <h2>Validation Questions</h2>
-  <table>
-    <tr><th>Question</th><th>Rating</th><th style="text-align:right;width:60px;">Score</th></tr>
-    ${questionRows}
-    <tr class="total-row"><td>Total Pre-Screen Score</td><td colspan="2" style="text-align:right;">${total} / 30</td></tr>
-  </table>
-  <h2>Key Concerns & Notes</h2>
-  <div class="notes-box">${notes || '(none recorded)'}</div>
-  <br><button onclick="window.print()" style="padding:8px 16px;background:#1a3a5c;color:#c8a84b;border:none;border-radius:6px;cursor:pointer;font-weight:600;">🖨 Print / Save as PDF</button>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Arial,sans-serif;padding:36px 44px;max-width:760px;margin:0 auto;color:#1a1a1a;font-size:13px;line-height:1.6;}
+
+    /* ── Header ── */
+    .report-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #c8a84b;padding-bottom:14px;margin-bottom:20px;}
+    .report-title{font-size:22px;font-weight:700;color:#1a3a5c;letter-spacing:-.3px;}
+    .report-sub{font-size:12px;color:#888;margin-top:3px;}
+    .report-logo{font-family:monospace;font-size:14px;font-weight:700;background:#1a3a5c;color:#c8a84b;padding:6px 12px;border-radius:6px;}
+
+    /* ── Summary card ── */
+    .summary-card{display:flex;gap:16px;background:#f5f2eb;border-radius:10px;padding:18px 20px;margin-bottom:24px;align-items:center;}
+    .summary-score-block{text-align:center;flex-shrink:0;}
+    .summary-score-num{font-size:42px;font-weight:700;color:#1a3a5c;line-height:1;font-family:monospace;}
+    .summary-score-denom{font-size:14px;color:#888;margin-top:2px;}
+    .summary-divider{width:1px;background:#ddd;align-self:stretch;flex-shrink:0;}
+    .summary-detail{flex:1;}
+    .summary-decision{font-size:16px;font-weight:700;padding:8px 14px;border-radius:8px;display:inline-block;margin-bottom:10px;}
+    .summary-bar-wrap{background:#ddd;border-radius:4px;height:8px;width:100%;margin-bottom:6px;}
+    .summary-bar{height:8px;border-radius:4px;background:#1a3a5c;}
+    .summary-bar-label{font-size:11px;color:#888;}
+    .summary-meta{font-size:12px;color:#666;margin-top:10px;}
+
+    /* ── Section heading ── */
+    .section-heading{font-size:10px;font-weight:700;color:#1a3a5c;text-transform:uppercase;letter-spacing:.1em;margin:24px 0 10px;border-bottom:1px solid #e0dbd0;padding-bottom:6px;}
+
+    /* ── Question block ── */
+    .q-block{border:1px solid #e0dbd0;border-radius:10px;margin-bottom:16px;overflow:hidden;page-break-inside:avoid;}
+    .q-header{display:flex;justify-content:space-between;align-items:flex-start;background:#fafaf8;padding:14px 16px;gap:12px;border-bottom:1px solid #ece8e0;}
+    .q-left{display:flex;align-items:flex-start;gap:12px;flex:1;}
+    .q-num{background:#1a3a5c;color:#c8a84b;font-family:monospace;font-weight:700;font-size:13px;padding:4px 9px;border-radius:5px;flex-shrink:0;margin-top:1px;}
+    .q-category{font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px;}
+    .q-text{font-size:13px;font-weight:600;color:#1a3a5c;line-height:1.5;font-style:italic;}
+    .q-score-badge{text-align:center;padding:8px 12px;border-radius:8px;flex-shrink:0;min-width:72px;}
+    .q-score-num{font-size:18px;font-weight:700;font-family:monospace;line-height:1;}
+    .q-score-label{font-size:10px;font-weight:600;margin-top:2px;}
+
+    /* ── Context rows ── */
+    .q-why,.q-scoring-row,.q-flags,.q-notes-row{padding:10px 16px;border-bottom:1px solid #f0ece4;font-size:12px;display:flex;gap:10px;align-items:flex-start;}
+    .q-notes-row{border-bottom:none;}
+    .q-flags{flex-direction:column;gap:6px;}
+    .flag-list{list-style:disc;padding-left:18px;margin-top:4px;color:#8b2020;}
+    .flag-list li{font-size:12px;margin-bottom:2px;}
+
+    /* ── Pills ── */
+    .pill{display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:2px 7px;border-radius:20px;flex-shrink:0;margin-top:1px;}
+    .pill-why{background:#e8f0fb;color:#2a5298;}
+    .pill-scoring{background:#eef8f2;color:#1d6b4a;}
+    .pill-flags{background:#fbe8e8;color:#8b2020;}
+    .pill-notes{background:#f0ece4;color:#5a4a2a;}
+
+    /* ── Scoring chips ── */
+    .score-chip{font-family:monospace;font-size:11px;font-weight:700;padding:1px 6px;border-radius:4px;display:inline-block;}
+    .score-0{background:#d4ede3;color:#1d6b4a;}
+    .score-3{background:#fdf6e0;color:#7a5c00;}
+    .score-6{background:#f5dada;color:#8b2020;}
+
+    /* ── Notes box ── */
+    .q-notes-box{flex:1;background:#fffdf8;border:1px dashed #d0cab8;border-radius:6px;padding:8px 11px;font-size:12px;line-height:1.65;white-space:pre-wrap;min-height:36px;}
+
+    /* ── Summary notes ── */
+    .overall-notes-box{background:#f5f2eb;padding:14px 16px;border-radius:8px;font-size:13px;line-height:1.75;white-space:pre-wrap;border:1px solid #e0dbd0;}
+
+    /* ── Print ── */
+    @media print{
+      body{padding:20px 28px;}
+      button.print-btn{display:none;}
+      .q-block{page-break-inside:avoid;}
+    }
+  </style>
+  </head><body>
+
+  <div class="report-header">
+    <div>
+      <div class="report-title">Pre-Screen Interview Report</div>
+      <div class="report-sub">TRS — AV Sales Rep Candidate Evaluation</div>
+    </div>
+    <div class="report-logo">TRS</div>
+  </div>
+
+  <div class="summary-card">
+    <div class="summary-score-block">
+      <div class="summary-score-num">${total}</div>
+      <div class="summary-score-denom">out of 30</div>
+    </div>
+    <div class="summary-divider"></div>
+    <div class="summary-detail">
+      <div class="summary-decision" style="background:${decisionBg};color:${decisionColor};">${decisionLabel}</div>
+      <div class="summary-bar-wrap"><div class="summary-bar" style="width:${scorePercent}%;background:${decisionColor};"></div></div>
+      <div class="summary-bar-label">${scorePercent}% of maximum score &nbsp;·&nbsp; Lower score = stronger candidate (0 = best per question)</div>
+      <div class="summary-meta">Candidate: <strong>${candidateName}</strong> &nbsp;·&nbsp; Date: ${new Date().toLocaleDateString('en-US',{dateStyle:'long'})}</div>
+    </div>
+  </div>
+
+  <div class="section-heading">Validation Questions — Detail &amp; Interviewer Notes</div>
+  <p style="font-size:11px;color:#888;margin-bottom:14px;">Each question below shows the scoring rationale, what a strong vs. weak answer looks like, red flags to watch for, and the interviewer's recorded notes.</p>
+
+  ${questionBlocks}
+
+  <div class="section-heading">Overall Key Concerns &amp; Notes</div>
+  <div class="overall-notes-box">${notes || '(none recorded)'}</div>
+
+  <br>
+  <button class="print-btn" onclick="window.print()" style="padding:9px 18px;background:#1a3a5c;color:#c8a84b;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;">🖨 Print / Save as PDF</button>
+
   </body></html>`);
   win.document.close();
   win.focus();
@@ -4207,7 +4638,7 @@ updateSectionBadges();
 // Deep link — only honour if role allows
 function handleDeepLink() {
   const hash = location.hash.replace('#','');
-  const mgrOnly = ['manager','coaching','prescreen','interview','videos'];
+  const mgrOnly = ['manager','coaching','prescreen','interview','videos','onboarding'];
   if (hash && !(mgrOnly.includes(hash) && currentRole !== 'manager')) {
     const tab = document.querySelector(`[onclick*="showView('${hash}'"]`);
     if (tab) showView(hash, tab);
@@ -4217,6 +4648,849 @@ handleDeepLink();
 
 document.getElementById('onloadName').addEventListener('keydown', e => { if(e.key==='Enter') { if(currentRole==='manager') document.getElementById('onloadPin').focus(); else startSession(); }});
 document.getElementById('onloadPin').addEventListener('keydown', e => { if(e.key==='Enter') startSession(); });
+
+// ══════ ONBOARDING MODULE ══════
+
+// ── State ──
+const obState = {
+  currentStep: 0,
+  stepsComplete: [false, false, false, false, false],
+  signatures: {},   // key -> { name, timestamp, token }
+  uploads: {},      // key -> { name, type, dataUrl, pdfBlob }
+  reviewChecks: {},
+  finalized: false
+};
+
+const obUploadDefs = [
+  { key: 'gov_id',    label: 'Government-Issued Photo ID',   required: true,  hint: 'Driver\'s license, passport, or state ID' },
+  { key: 'i9',        label: 'I-9 Employment Eligibility',   required: true,  hint: 'Completed I-9 form (PDF)' },
+  { key: 'w4',        label: 'W-4 Federal Tax Withholding',  required: true,  hint: 'Signed W-4 form' },
+  { key: 'direct_dep',label: 'Direct Deposit Form',          required: false, hint: 'Optional — bank routing info' },
+];
+
+const obReviewDefs = [
+  { key: 'r_identity',  label: 'Identity verified against uploaded ID' },
+  { key: 'r_offer',     label: 'Offer terms confirmed verbally with candidate' },
+  { key: 'r_legal',     label: 'All legal disclosures reviewed and understood' },
+  { key: 'r_start',     label: 'Start date and first-day logistics confirmed' },
+  { key: 'r_system',    label: 'Odoo login / system access requested' },
+  { key: 'r_training',  label: 'Training schedule (TRS) shared with candidate' },
+];
+
+const obDocLabels = {
+  offer:      'Offer Letter',
+  noncompete: 'Non-Compete Agreement',
+  atwill:     'At-Will Acknowledgment',
+  nda:        'Confidentiality / NDA',
+  conduct:    'Code of Conduct',
+};
+
+// ── Sync candidate name to sidebar ──
+function obSyncName() {
+  const n = document.getElementById('obCandidateName').value.trim();
+  document.getElementById('obSidebarName').textContent = n || 'No candidate';
+}
+
+// ── Step navigation ──
+function obGoStep(n) {
+  const maxAllowed = obState.stepsComplete.findIndex(v => !v);
+  const cap = maxAllowed === -1 ? 4 : maxAllowed;
+  if (n > cap) return;
+  obState.currentStep = n;
+  document.querySelectorAll('.ob-panel').forEach((p, i) => p.classList.toggle('ob-active', i === n));
+  for (let i = 0; i <= 4; i++) {
+    const row  = document.getElementById('ob-step-' + i);
+    const icon = document.getElementById('ob-step-icon-' + i);
+    if (!row || !icon) continue;
+    row.classList.toggle('active-step', i === n);
+    row.classList.toggle('locked', i > cap);
+    icon.className = 'ob-step-icon';
+    if (obState.stepsComplete[i])   { icon.className += ' done';    icon.textContent = '✓'; }
+    else if (i === n)               { icon.className += ' current'; icon.textContent = i + 1; }
+    else                            { icon.className += ' pending'; icon.textContent = i + 1; }
+  }
+}
+
+function obAdvance(fromStep) {
+  obState.stepsComplete[fromStep] = true;
+  if (fromStep + 1 <= 4) obGoStep(fromStep + 1);
+  else obGoStep(fromStep);
+  if (fromStep + 1 === 4) obRenderPackageList();
+}
+
+// ── Signature modal ──
+let obSignTarget = null;
+function openObSignModal(docKey) {
+  obSignTarget = docKey;
+  const label = obDocLabels[docKey] || docKey;
+  document.getElementById('obSignModalTitle').textContent = 'Sign: ' + label;
+  document.getElementById('obSignModalDesc').textContent =
+    'Type your full legal name to electronically acknowledge and sign the ' + label + '. This creates a timestamped audit record.';
+  const now = new Date();
+  document.getElementById('obSignMeta').innerHTML =
+    'Document: <strong>' + label + '</strong><br>' +
+    'Date: <strong>' + now.toLocaleDateString('en-US', {dateStyle:'long'}) + '</strong><br>' +
+    'Time: <strong>' + now.toLocaleTimeString('en-US', {timeStyle:'short'}) + '</strong><br>' +
+    'Record ID: <strong>' + obGenToken() + '</strong>';
+  document.getElementById('obSignName').value = '';
+  document.getElementById('obSignModal').classList.add('open');
+  setTimeout(() => document.getElementById('obSignName').focus(), 100);
+}
+function closeObSignModal() {
+  document.getElementById('obSignModal').classList.remove('open');
+  obSignTarget = null;
+}
+function obGenToken() {
+  return 'TRS-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2,6).toUpperCase();
+}
+function confirmObSign() {
+  const name = document.getElementById('obSignName').value.trim();
+  if (!name) { document.getElementById('obSignName').style.borderColor = 'var(--red)'; return; }
+  document.getElementById('obSignName').style.borderColor = '';
+  const key = obSignTarget; // capture before closeObSignModal nulls it
+  const token = obGenToken();
+  const now = new Date();
+  obState.signatures[key] = {
+    name, token,
+    timestamp: now.toLocaleString('en-US', {dateStyle:'long', timeStyle:'short'}),
+    iso: now.toISOString()
+  };
+  closeObSignModal();
+  obApplySignature(key);
+}
+
+function obAuditHtml(sig, label) {
+  return '<strong>✓ Signed:</strong> ' + label + '<br>' +
+         '<strong>Name:</strong> ' + sig.name + '<br>' +
+         '<strong>Date:</strong> ' + sig.timestamp + '<br>' +
+         '<strong>Record ID:</strong> ' + sig.token;
+}
+
+function obApplySignature(key) {
+  const sig = obState.signatures[key];
+  const label = obDocLabels[key] || key;
+  if (key === 'offer') {
+    document.getElementById('ob-offer-unsigned').style.display = 'none';
+    document.getElementById('ob-offer-signed').style.display = '';
+    document.getElementById('ob-offer-audit').innerHTML = obAuditHtml(sig, label);
+  } else {
+    // Legal disclosures
+    const statusEl = document.getElementById('ob-' + key + '-status');
+    const btnEl    = document.getElementById('ob-' + key + '-btn');
+    if (statusEl) statusEl.innerHTML = '<span class="doc-status-badge signed">✓ Signed</span>';
+    if (btnEl) { btnEl.textContent = 'Re-sign'; btnEl.classList.remove('primary'); }
+    obCheckLegalComplete();
+  }
+}
+
+function obCheckLegalComplete() {
+  const required = ['noncompete','atwill','nda','conduct'];
+  const allDone = required.every(k => obState.signatures[k]);
+  document.getElementById('ob-legal-incomplete').style.display = allDone ? 'none' : '';
+  document.getElementById('ob-legal-complete').style.display   = allDone ? ''     : 'none';
+}
+
+// ── Upload handling ──
+function obRenderUploads() {
+  const tbody = document.getElementById('ob-upload-rows');
+  tbody.innerHTML = '';
+  obUploadDefs.forEach(def => {
+    const up = obState.uploads[def.key];
+    const statusHtml = up
+      ? '<span class="doc-status-badge received">✓ Received</span>'
+      : (def.required
+          ? '<span class="doc-status-badge missing">✗ Missing</span>'
+          : '<span class="doc-status-badge pending">— Optional</span>');
+    const actionHtml = up
+      ? `<button onclick="obTriggerUpload('${def.key}')" class="doc-action-btn">Replace</button>`
+      : `<button onclick="obTriggerUpload('${def.key}')" class="doc-action-btn ${def.required ? 'primary' : ''}">Upload</button>`;
+    tbody.innerHTML += `<tr>
+      <td><strong>${def.label}</strong><div style="font-size:11px;color:var(--muted);">${def.hint}</div></td>
+      <td><span style="font-size:11px;color:var(--muted);">Candidate</span></td>
+      <td id="ob-upload-status-${def.key}">${statusHtml}</td>
+      <td>${actionHtml}</td>
+    </tr>`;
+  });
+  obCheckUploadsComplete();
+}
+
+function obTriggerUpload(key) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.pdf,.jpg,.jpeg,.png';
+  input.onchange = function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      const dataUrl = ev.target.result;
+      const isImage = file.type.startsWith('image/');
+      if (isImage) {
+        obImageToPdf(dataUrl, file.name, function(pdfBlob) {
+          obState.uploads[key] = { name: file.name, type: 'application/pdf', dataUrl, pdfBlob, originalType: file.type };
+          obRenderUploads();
+        });
+      } else {
+        obState.uploads[key] = { name: file.name, type: file.type, dataUrl, pdfBlob: null };
+        obRenderUploads();
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+}
+
+// Convert image to PDF blob via Canvas
+function obImageToPdf(dataUrl, filename, cb) {
+  const img = new Image();
+  img.onload = function() {
+    const canvas = document.createElement('canvas');
+    const maxW = 595, maxH = 842; // A4 pt
+    let w = img.width, h = img.height;
+    if (w > maxW) { h = h * maxW / w; w = maxW; }
+    if (h > maxH) { w = w * maxH / h; h = maxH; }
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    // Build minimal PDF wrapping the image
+    const imgData = canvas.toDataURL('image/jpeg', 0.85).split(',')[1];
+    const pdfHeader = `%PDF-1.4\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${Math.round(w)} ${Math.round(h)}] /Contents 4 0 R /Resources << /XObject << /Im1 5 0 R >> >> >>\nendobj\n4 0 obj\n<< /Length 26 >>\nstream\nq ${Math.round(w)} 0 0 ${Math.round(h)} 0 0 cm /Im1 Do Q\nendstream\nendobj\n`;
+    // Use a simple approach: just store canvas jpeg blob and mark as converted
+    canvas.toBlob(function(blob) { cb(blob); }, 'image/jpeg', 0.85);
+  };
+  img.src = dataUrl;
+}
+
+function obCheckUploadsComplete() {
+  const required = obUploadDefs.filter(d => d.required);
+  const allDone = required.every(d => obState.uploads[d.key]);
+  document.getElementById('ob-uploads-incomplete').style.display = allDone ? 'none' : '';
+  document.getElementById('ob-uploads-complete').style.display   = allDone ? ''     : 'none';
+}
+
+// ── Review checklist ──
+function obRenderReview() {
+  const wrap = document.getElementById('ob-review-list');
+  wrap.innerHTML = '';
+  obReviewDefs.forEach(def => {
+    const checked = obState.reviewChecks[def.key] || false;
+    wrap.innerHTML += `<label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 14px;background:var(--white);border:1.5px solid ${checked ? 'var(--green)' : 'var(--border)'};border-radius:9px;transition:border-color .15s;">
+      <input type="checkbox" ${checked ? 'checked' : ''} onchange="obToggleReview('${def.key}',this.checked)"
+        style="width:17px;height:17px;accent-color:var(--green);flex-shrink:0;">
+      <span style="font-size:13px;font-weight:${checked ? '600' : '400'};color:${checked ? 'var(--green)' : 'var(--text)'};">${def.label}</span>
+    </label>`;
+  });
+  obCheckReviewComplete();
+}
+
+function obToggleReview(key, val) {
+  obState.reviewChecks[key] = val;
+  obRenderReview();
+}
+
+function obCheckReviewComplete() {
+  const allDone = obReviewDefs.every(d => obState.reviewChecks[d.key]);
+  document.getElementById('ob-review-incomplete').style.display = allDone ? 'none' : '';
+  document.getElementById('ob-review-complete').style.display   = allDone ? ''     : 'none';
+}
+
+// ── Package list for final step ──
+function obRenderPackageList() {
+  const cand = document.getElementById('obCandidateName').value.trim() || 'Candidate';
+  let html = '';
+  // Signatures
+  Object.entries(obState.signatures).forEach(([k, sig]) => {
+    html += `✓ <strong>${obDocLabels[k] || k}</strong> — signed by ${sig.name} on ${sig.timestamp}<br>`;
+  });
+  // Uploads
+  obUploadDefs.forEach(def => {
+    const up = obState.uploads[def.key];
+    if (up) html += `✓ <strong>${def.label}</strong> — ${up.name}${up.pdfBlob ? ' (converted to PDF)' : ''}<br>`;
+  });
+  // Summary
+  html += `✓ <strong>Onboarding Summary PDF</strong> — auto-generated<br>`;
+  document.getElementById('ob-package-list').innerHTML = html;
+
+  // Progress bar
+  const totalItems = Object.keys(obDocLabels).length + obUploadDefs.filter(d=>d.required).length + 1;
+  const doneItems  = Object.keys(obState.signatures).length + obUploadDefs.filter(d=>d.required && obState.uploads[d.key]).length + 1;
+  const pct = Math.round(doneItems / totalItems * 100);
+  document.getElementById('ob-final-bar').style.width = pct + '%';
+  document.getElementById('ob-final-bar-label').textContent = pct + '% complete — ' + doneItems + ' of ' + totalItems + ' items ready';
+}
+
+// ── Summary PDF export ──
+function obExportSummaryPdf() {
+  const cand     = document.getElementById('obCandidateName').value.trim() || 'Unknown Candidate';
+  const role     = document.getElementById('obRole').value.trim() || '—';
+  const startRaw = document.getElementById('obStartDate').value;
+  const startStr = startRaw ? new Date(startRaw + 'T12:00:00').toLocaleDateString('en-US',{dateStyle:'long'}) : '—';
+  const salary   = document.getElementById('obSalary').value.trim() || '—';
+  const commission = document.getElementById('obCommission').value.trim() || '—';
+  const mgr      = document.getElementById('obManager').value.trim() || '—';
+  const loc      = document.getElementById('obLocation').value.trim() || '—';
+  const offerNotes = document.getElementById('obOfferNotes').value.trim() || '—';
+
+  let sigRows = Object.entries(obState.signatures).map(([k, sig]) =>
+    `<tr><td><strong>${obDocLabels[k]||k}</strong></td><td>${sig.name}</td><td>${sig.timestamp}</td><td style="font-family:monospace;font-size:11px;">${sig.token}</td></tr>`
+  ).join('');
+
+  let uploadRows = obUploadDefs.map(def => {
+    const up = obState.uploads[def.key];
+    return `<tr><td><strong>${def.label}</strong></td><td>${def.required ? 'Required' : 'Optional'}</td><td>${up ? '✓ ' + up.name : '✗ Not uploaded'}</td></tr>`;
+  }).join('');
+
+  let reviewRows = obReviewDefs.map(def =>
+    `<tr><td>${def.label}</td><td style="color:${obState.reviewChecks[def.key] ? '#1d6b4a' : '#8b2020'};font-weight:700;">${obState.reviewChecks[def.key] ? '✓ Confirmed' : '✗ Not confirmed'}</td></tr>`
+  ).join('');
+
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html><head><title>TRS Onboarding — ${cand}</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Arial,sans-serif;padding:36px 44px;max-width:760px;margin:0 auto;color:#1a1a1a;font-size:13px;line-height:1.6;}
+    .rh{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #c8a84b;padding-bottom:14px;margin-bottom:20px;}
+    .rt{font-size:22px;font-weight:700;color:#1a3a5c;}.rs{font-size:12px;color:#888;margin-top:3px;}
+    .logo{font-family:monospace;font-size:14px;font-weight:700;background:#1a3a5c;color:#c8a84b;padding:6px 12px;border-radius:6px;}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;background:#f5f2eb;border-radius:10px;padding:16px 18px;margin-bottom:20px;}
+    .info-item label{font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:2px;}
+    .info-item span{font-size:13px;font-weight:600;color:#1a3a5c;}
+    h2{font-size:10px;font-weight:700;color:#1a3a5c;text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid #e0dbd0;padding-bottom:6px;margin:20px 0 10px;}
+    table{width:100%;border-collapse:collapse;margin-bottom:12px;}
+    th{background:#1a3a5c;color:#c8a84b;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:8px 10px;text-align:left;}
+    td{padding:9px 10px;border-bottom:1px solid #eee;font-size:12px;vertical-align:top;}
+    .notes{background:#f5f2eb;border-radius:8px;padding:12px 14px;font-size:12px;line-height:1.7;white-space:pre-wrap;}
+    @media print{button{display:none;}}
+  </style></head><body>
+  <div class="rh">
+    <div><div class="rt">Onboarding Summary</div><div class="rs">TRS — New Hire Package</div></div>
+    <div class="logo">TRS</div>
+  </div>
+  <div class="info-grid">
+    <div class="info-item"><label>Candidate</label><span>${cand}</span></div>
+    <div class="info-item"><label>Role</label><span>${role}</span></div>
+    <div class="info-item"><label>Start Date</label><span>${startStr}</span></div>
+    <div class="info-item"><label>Reporting Manager</label><span>${mgr}</span></div>
+    <div class="info-item"><label>Compensation</label><span>${salary}</span></div>
+    <div class="info-item"><label>Commission</label><span>${commission}</span></div>
+    <div class="info-item"><label>Location</label><span>${loc}</span></div>
+    <div class="info-item"><label>Generated</label><span>${new Date().toLocaleDateString('en-US',{dateStyle:'long'})}</span></div>
+  </div>
+  ${offerNotes !== '—' ? `<h2>Offer Notes</h2><div class="notes">${offerNotes}</div>` : ''}
+  <h2>Digital Audit Trail — Signatures</h2>
+  <table><thead><tr><th>Document</th><th>Signed By</th><th>Timestamp</th><th>Record ID</th></tr></thead><tbody>${sigRows || '<tr><td colspan="4" style="color:#aaa;">No signatures recorded</td></tr>'}</tbody></table>
+  <h2>Document Uploads</h2>
+  <table><thead><tr><th>Document</th><th>Required</th><th>Status</th></tr></thead><tbody>${uploadRows}</tbody></table>
+  <h2>Final Review Checklist</h2>
+  <table><thead><tr><th>Item</th><th>Status</th></tr></thead><tbody>${reviewRows}</tbody></table>
+  <br><button onclick="window.print()" style="padding:9px 18px;background:#1a3a5c;color:#c8a84b;border:none;border-radius:8px;cursor:pointer;font-weight:600;">🖨 Print / Save as PDF</button>
+  </body></html>`);
+  win.document.close(); win.focus();
+}
+
+// ── Zip export ──
+async function obExportZip() {
+  const cand = document.getElementById('obCandidateName').value.trim() || 'Candidate';
+  const btn = event.target;
+  btn.textContent = '⏳ Building package...';
+  btn.disabled = true;
+
+  try {
+    // Dynamically load JSZip from CDN
+    if (!window.JSZip) {
+      await new Promise((res, rej) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+        s.onload = res; s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
+
+    const zip = new JSZip();
+    const folder = zip.folder(cand.replace(/\s+/g,'-') + '_Onboarding');
+
+    // 1. Signature audit log as text file
+    let auditLog = 'TRS ONBOARDING AUDIT TRAIL\n' + '='.repeat(44) + '\n';
+    auditLog += 'Candidate: ' + cand + '\n';
+    auditLog += 'Generated: ' + new Date().toLocaleString('en-US', {dateStyle:'long', timeStyle:'short'}) + '\n\n';
+    auditLog += 'SIGNATURES\n' + '-'.repeat(30) + '\n';
+    Object.entries(obState.signatures).forEach(([k, sig]) => {
+      auditLog += (obDocLabels[k]||k) + '\n  Signed by: ' + sig.name + '\n  Timestamp: ' + sig.timestamp + '\n  Record ID: ' + sig.token + '\n\n';
+    });
+    folder.file('audit-trail.txt', auditLog);
+
+    // 2. Uploaded documents
+    const uploadsFolder = folder.folder('documents');
+    for (const def of obUploadDefs) {
+      const up = obState.uploads[def.key];
+      if (!up) continue;
+      const ext = up.pdfBlob ? '.jpg' : (up.type === 'application/pdf' ? '.pdf' : '.bin');
+      const fname = def.key + ext;
+      if (up.pdfBlob) {
+        uploadsFolder.file(fname, up.pdfBlob);
+      } else {
+        // fetch the dataUrl as blob
+        const res = await fetch(up.dataUrl);
+        const blob = await res.blob();
+        uploadsFolder.file(fname, blob);
+      }
+    }
+
+    // 3. Session JSON snapshot
+    const snapshot = {
+      version: 5,
+      generated: new Date().toISOString(),
+      candidate: cand,
+      role: document.getElementById('obRole').value.trim(),
+      startDate: document.getElementById('obStartDate').value,
+      signatures: obState.signatures,
+      uploads: Object.fromEntries(Object.entries(obState.uploads).map(([k,v])=>([k, { name: v.name, type: v.type }]))),
+      reviewChecks: obState.reviewChecks,
+      finalized: true
+    };
+    folder.file('session.json', JSON.stringify(snapshot, null, 2));
+
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+    const url = URL.createObjectURL(zipBlob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = cand.replace(/\s+/g,'-') + '_Onboarding_Package.zip';
+    a.click();
+    URL.revokeObjectURL(url);
+
+    obState.finalized = true;
+    document.getElementById('ob-finalized-badge').style.display = '';
+    btn.textContent = '✓ Downloaded';
+  } catch(err) {
+    btn.textContent = '📦 Finalize & Download Zip';
+    btn.disabled = false;
+    alert('Could not build zip: ' + err.message);
+  }
+}
+
+// ── Import session into onboarding ──
+function obImportSession() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      try {
+        const data = JSON.parse(ev.target.result);
+        // Accept TRS session exports — pull candidate name from prescreen or interview
+        const name = data.userName || (data.interview && data.interview.candidateName) || '';
+        if (name) {
+          document.getElementById('obCandidateName').value = name;
+          obSyncName();
+        }
+        // Restore onboarding state if it was previously exported
+        if (data.onboarding) {
+          const ob = data.onboarding;
+          if (ob.signatures) Object.assign(obState.signatures, ob.signatures);
+          if (ob.reviewChecks) Object.assign(obState.reviewChecks, ob.reviewChecks);
+          // Re-apply signatures to UI
+          Object.keys(obState.signatures).forEach(k => obApplySignature(k));
+          obRenderReview();
+          obRenderUploads();
+          // Restore step progress
+          if (ob.stepsComplete) { ob.stepsComplete.forEach((v,i) => obState.stepsComplete[i] = v); }
+          const lastStep = obState.stepsComplete.lastIndexOf(true);
+          obGoStep(Math.min(lastStep + 1, 4));
+        }
+        if (name) alert('Session imported for: ' + name);
+      } catch(err) {
+        alert('Could not read file. Use a valid TRS session JSON.');
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+// ── Reset ──
+function obReset() {
+  if (!confirm('Clear all onboarding data for this candidate?')) return;
+  Object.keys(obState.signatures).forEach(k => delete obState.signatures[k]);
+  Object.keys(obState.uploads).forEach(k => delete obState.uploads[k]);
+  Object.keys(obState.reviewChecks).forEach(k => delete obState.reviewChecks[k]);
+  obState.stepsComplete.fill(false);
+  obState.currentStep = 0;
+  obState.finalized = false;
+  document.getElementById('obCandidateName').value = '';
+  document.getElementById('obStartDate').value = '';
+  document.getElementById('obRole').value = '';
+  document.getElementById('obSalary').value = '';
+  document.getElementById('obCommission').value = '';
+  document.getElementById('obManager').value = '';
+  document.getElementById('obLocation').value = '';
+  document.getElementById('obOfferNotes').value = '';
+  document.getElementById('ob-offer-unsigned').style.display = '';
+  document.getElementById('ob-offer-signed').style.display = 'none';
+  document.getElementById('ob-finalized-badge').style.display = 'none';
+  obSyncName();
+  obGoStep(0);
+  obCheckLegalComplete();
+  obRenderUploads();
+  obRenderReview();
+}
+
+// ── Also update deep link list ──
+const _origMgrOnly = ['manager','coaching','prescreen','interview','videos','onboarding'];
+
+// ── Init ──
+obRenderUploads();
+obRenderReview();
+
+// Patch deep link to include onboarding
+(function() {
+  const origHandleDeepLink = handleDeepLink;
+})();
+
+
+
+// ══════ ONBOARDING DOCUMENT PRINTING ENGINE ══════
+
+function obGetHeader(docTitle, docSubtitle) {
+  const cand    = document.getElementById('obCandidateName').value.trim() || 'Candidate';
+  const role    = document.getElementById('obRole').value.trim() || 'AV Sales Representative';
+  const startRaw= document.getElementById('obStartDate').value;
+  const startStr= startRaw ? new Date(startRaw+'T12:00:00').toLocaleDateString('en-US',{dateStyle:'long'}) : '—';
+  const mgr     = document.getElementById('obManager').value.trim() || '—';
+  const loc     = document.getElementById('obLocation').value.trim() || '—';
+  const today   = new Date().toLocaleDateString('en-US',{dateStyle:'long'});
+  return { cand, role, startStr, mgr, loc, today };
+}
+
+function obDocStyles() {
+  return `
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Georgia',serif;color:#1a1a1a;background:#fff;font-size:14px;line-height:1.7;}
+    .page{max-width:720px;margin:0 auto;padding:52px 60px;}
+    .logo-bar{display:flex;align-items:center;gap:14px;margin-bottom:36px;padding-bottom:16px;border-bottom:3px solid #c8a84b;}
+    .logo-box{width:44px;height:44px;background:#1a3a5c;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:16px;font-weight:700;color:#c8a84b;flex-shrink:0;}
+    .logo-text h1{font-size:18px;font-weight:700;color:#1a3a5c;letter-spacing:-.2px;}
+    .logo-text p{font-size:12px;color:#888;margin-top:1px;}
+    .doc-title{font-size:26px;font-weight:700;color:#1a3a5c;margin-bottom:4px;letter-spacing:-.3px;}
+    .doc-subtitle{font-size:13px;color:#888;font-family:Arial,sans-serif;margin-bottom:28px;}
+    .address-block{margin-bottom:28px;font-size:14px;line-height:1.9;}
+    .address-block .label{font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;font-family:Arial,sans-serif;}
+    .salutation{font-size:15px;margin-bottom:20px;font-style:italic;}
+    .body-text{font-size:14px;line-height:1.85;margin-bottom:16px;text-align:justify;}
+    .terms-table{width:100%;border-collapse:collapse;margin:24px 0;font-family:Arial,sans-serif;}
+    .terms-table th{background:#1a3a5c;color:#c8a84b;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:9px 12px;text-align:left;}
+    .terms-table td{padding:10px 12px;border-bottom:1px solid #e8e4dc;font-size:13px;vertical-align:top;}
+    .terms-table tr:last-child td{border-bottom:none;}
+    .terms-table .term-label{font-weight:700;color:#1a3a5c;width:40%;}
+    .section-heading{font-size:11px;font-weight:700;color:#1a3a5c;text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid #e8e4dc;padding-bottom:7px;margin:28px 0 14px;font-family:Arial,sans-serif;}
+    .sig-block{margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:28px;}
+    .sig-col .sig-name{font-size:17px;font-style:italic;color:#1a3a5c;border-bottom:1.5px solid #1a3a5c;padding-bottom:4px;margin-bottom:5px;min-height:28px;}
+    .sig-col .sig-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#888;font-family:Arial,sans-serif;}
+    .audit-block{background:#faf8f2;border:1px solid #e0d8c0;border-radius:8px;padding:14px 16px;margin-top:18px;font-family:'Courier New',monospace;font-size:11px;line-height:1.9;color:#5a4a1a;}
+    .audit-block strong{color:#1a3a5c;}
+    .policy-intro{font-size:14px;line-height:1.85;margin-bottom:16px;}
+    .policy-list{margin:12px 0 16px;padding-left:20px;}
+    .policy-list li{margin-bottom:8px;font-size:14px;line-height:1.7;}
+    .clause{margin-bottom:20px;}
+    .clause-title{font-size:13px;font-weight:700;color:#1a3a5c;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;font-family:Arial,sans-serif;}
+    .page-break{page-break-before:always;padding-top:52px;}
+    .doc-divider{border:none;border-top:2px solid #c8a84b;margin:48px 0;}
+    .footer{margin-top:48px;padding-top:14px;border-top:1px solid #e8e4dc;font-size:10px;color:#aaa;font-family:Arial,sans-serif;display:flex;justify-content:space-between;}
+    @media print{
+      button{display:none!important;}
+      .page{padding:36px 48px;}
+      .page-break{page-break-before:always;}
+    }
+  `;
+}
+
+function obLogoBar(docTitle, docSub) {
+  return `<div class="logo-bar">
+    <div class="logo-box">TRS</div>
+    <div class="logo-text"><h1>Total Recording Services</h1><p>Professional AV &amp; Event Technology</p></div>
+  </div>
+  <div class="doc-title">${docTitle}</div>
+  <div class="doc-subtitle">${docSub}</div>`;
+}
+
+function obSigBlock(sigKey, signerLabel, companySignerLabel) {
+  const sig = obState.signatures[sigKey];
+  const signed = sig ? sig.name : '';
+  const ts     = sig ? sig.timestamp : '';
+  const tok    = sig ? sig.token : '';
+  return `
+  <div class="sig-block">
+    <div class="sig-col">
+      <div class="sig-label">Candidate Signature</div>
+      <div class="sig-name">${signed}</div>
+      <div class="sig-label">${signerLabel}</div>
+      ${ts ? `<div style="font-size:11px;color:#888;margin-top:4px;font-family:Arial,sans-serif;">${ts}</div>` : ''}
+    </div>
+    <div class="sig-col">
+      <div class="sig-label">Authorized Signatory</div>
+      <div class="sig-name">&nbsp;</div>
+      <div class="sig-label">${companySignerLabel}</div>
+    </div>
+  </div>
+  ${sig ? `<div class="audit-block">
+    <strong>Digital Audit Record</strong><br>
+    Signed by: <strong>${sig.name}</strong> &nbsp;·&nbsp; ${sig.timestamp}<br>
+    Record ID: <strong>${sig.token}</strong>
+  </div>` : ''}`;
+}
+
+function obDocFooter(docName, cand) {
+  return `<div class="footer"><span>${docName} — ${cand}</span><span>Generated ${new Date().toLocaleDateString('en-US',{dateStyle:'long'})}</span></div>`;
+}
+
+// ── Print Offer Letter ──
+function obPrintOfferLetter() {
+  const h = obGetHeader();
+  const salary     = document.getElementById('obSalary').value.trim() || '—';
+  const commission = document.getElementById('obCommission').value.trim() || '—';
+  const offerNotes = document.getElementById('obOfferNotes').value.trim();
+
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html><head><title>Offer Letter — ${h.cand}</title>
+  <style>${obDocStyles()}</style></head>
+  <body><div class="page">
+  ${obLogoBar('Offer Letter', 'Conditional Offer of Employment')}
+
+  <div class="address-block">
+    <div class="label">Date</div>
+    ${h.today}
+  </div>
+
+  <div class="address-block">
+    <div class="label">Prepared For</div>
+    <strong>${h.cand}</strong>
+  </div>
+
+  <div class="salutation">Dear ${h.cand},</div>
+
+  <p class="body-text">
+    We are pleased to extend this conditional offer of employment for the position of <strong>${h.role}</strong> at
+    Total Recording Services. This offer is contingent upon successful completion of any required background
+    verification and your execution of the agreements referenced below.
+  </p>
+  <p class="body-text">
+    We believe your background and skills make you an excellent fit for our team, and we look forward to having
+    you contribute to our growth. Please review the terms outlined below carefully. If you have any questions
+    prior to signing, do not hesitate to reach out.
+  </p>
+
+  <div class="section-heading">Terms of Employment</div>
+  <table class="terms-table">
+    <thead><tr><th>Term</th><th>Detail</th></tr></thead>
+    <tbody>
+      <tr><td class="term-label">Position</td><td>${h.role}</td></tr>
+      <tr><td class="term-label">Start Date</td><td>${h.startStr}</td></tr>
+      <tr><td class="term-label">Reporting Manager</td><td>${h.mgr}</td></tr>
+      <tr><td class="term-label">Work Location</td><td>${h.loc}</td></tr>
+      <tr><td class="term-label">Base Compensation</td><td>${salary}</td></tr>
+      <tr><td class="term-label">Commission / Incentives</td><td>${commission}</td></tr>
+      <tr><td class="term-label">Employment Type</td><td>Full-Time, At-Will</td></tr>
+      <tr><td class="term-label">Benefits Eligibility</td><td>Per company policy; details provided on Day 1</td></tr>
+    </tbody>
+  </table>
+
+  ${offerNotes ? `<div class="section-heading">Additional Terms &amp; Notes</div><p class="body-text" style="white-space:pre-wrap;">${offerNotes}</p>` : ''}
+
+  <div class="section-heading">Conditions of Offer</div>
+  <p class="body-text">
+    This offer is conditional upon: (1) execution of all required onboarding agreements including the
+    Non-Compete, Confidentiality Agreement, and Code of Conduct; (2) provision of documentation establishing
+    your identity and employment eligibility as required by federal law; and (3) any background screening
+    required by company policy.
+  </p>
+  <p class="body-text">
+    This offer does not constitute a guarantee of employment for any specific duration. Employment at
+    Total Recording Services is at-will and may be terminated by either party at any time, with or without cause.
+  </p>
+
+  <p class="body-text" style="margin-top:24px;">
+    To accept this offer, please sign below and return a copy by your start date. We look forward to welcoming you to the team.
+  </p>
+  <p class="body-text">Sincerely,<br><br><strong>Total Recording Services</strong><br>Human Resources &amp; Management</p>
+
+  ${obSigBlock('offer', h.cand + ' — Candidate', 'TRS Management')}
+  ${obDocFooter('Offer Letter', h.cand)}
+  <br><button onclick="window.print()" style="margin-top:20px;padding:10px 20px;background:#1a3a5c;color:#c8a84b;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;font-family:Arial,sans-serif;">🖨 Print / Save as PDF</button>
+  </div></body></html>`);
+  win.document.close(); win.focus();
+}
+
+// ── Print Legal Package (all 4 docs, page-break separated) ──
+function obPrintLegalPackage() {
+  const h = obGetHeader();
+  const win = window.open('', '_blank');
+
+  function legalDoc(key, title, subtitle, body) {
+    return `
+    <div class="${key !== 'noncompete' ? 'page-break' : ''}">
+    <div class="page" style="padding-top:${key !== 'noncompete' ? '48px' : '52px'};">
+    ${obLogoBar(title, subtitle)}
+    <div class="address-block">
+      <div class="label">Employee</div><strong>${h.cand}</strong>
+    </div>
+    <div class="address-block">
+      <div class="label">Position</div>${h.role}
+    </div>
+    <div class="address-block">
+      <div class="label">Effective Date</div>${h.startStr}
+    </div>
+    ${body}
+    ${obSigBlock(key, h.cand + ' — Employee', 'TRS Authorized Signatory')}
+    ${obDocFooter(title, h.cand)}
+    </div></div>`;
+  }
+
+  const noncompete = legalDoc('noncompete', 'Non-Compete Agreement', 'Restrictive Covenant &amp; Non-Solicitation', `
+    <p class="policy-intro">This Non-Compete Agreement ("Agreement") is entered into between <strong>${h.cand}</strong> ("Employee") and Total Recording Services ("Company") as a condition of employment.</p>
+    <div class="section-heading">1. Restricted Activities</div>
+    <div class="clause">
+      <p class="body-text">During the term of employment and for a period of <strong>twelve (12) months</strong> following the termination of employment for any reason, Employee agrees not to, directly or indirectly:</p>
+      <ul class="policy-list">
+        <li>Engage in or own any interest in any business that provides audiovisual, event technology, or related services that compete with the Company within a <strong>50-mile radius</strong> of any Company operating location;</li>
+        <li>Solicit, recruit, or induce any Company employee to leave their employment;</li>
+        <li>Solicit any client, customer, or prospect of the Company for the purpose of providing competing services.</li>
+      </ul>
+    </div>
+    <div class="section-heading">2. Non-Solicitation of Clients</div>
+    <div class="clause">
+      <p class="body-text">Employee agrees that during the restricted period, they will not, directly or indirectly, contact or solicit any client or customer of the Company with whom Employee had material contact during the last twelve (12) months of employment, for the purpose of providing any product or service that competes with the Company's offerings.</p>
+    </div>
+    <div class="section-heading">3. Reasonableness</div>
+    <div class="clause">
+      <p class="body-text">Employee acknowledges that the restrictions in this Agreement are reasonable and necessary to protect the legitimate business interests of the Company, including its client relationships, proprietary methods, and confidential information.</p>
+    </div>
+    <div class="section-heading">4. Remedies</div>
+    <div class="clause">
+      <p class="body-text">Employee acknowledges that breach of this Agreement may cause irreparable harm to the Company for which monetary damages may be inadequate. The Company shall be entitled to seek injunctive relief in addition to any other remedies available at law or equity.</p>
+    </div>
+  `);
+
+  const atwill = legalDoc('atwill', 'At-Will Employment Acknowledgment', 'Employment Status Disclosure', `
+    <p class="policy-intro">This Acknowledgment confirms the at-will nature of Employee's employment relationship with Total Recording Services.</p>
+    <div class="section-heading">Acknowledgment of At-Will Status</div>
+    <div class="clause">
+      <p class="body-text">I, <strong>${h.cand}</strong>, acknowledge and understand the following:</p>
+      <ul class="policy-list">
+        <li>My employment with Total Recording Services is <strong>at-will</strong>, meaning that either the Company or I may terminate the employment relationship at any time, with or without cause, and with or without advance notice.</li>
+        <li>Nothing in the Offer Letter, Employee Handbook, or any other communication creates a contract of employment for a definite period or limits the at-will nature of my employment.</li>
+        <li>No verbal or written statements by any manager, supervisor, or representative of the Company — other than a written contract signed by an authorized officer — can alter or modify the at-will nature of my employment.</li>
+        <li>This Acknowledgment does not in any way alter or modify Company policies, benefit programs, or disciplinary procedures that may be in effect from time to time.</li>
+      </ul>
+    </div>
+    <div class="section-heading">Voluntary Agreement</div>
+    <p class="body-text">I have read this Acknowledgment, I understand its contents, and I sign it voluntarily as a condition of my employment.</p>
+  `);
+
+  const nda = legalDoc('nda', 'Confidentiality &amp; Non-Disclosure Agreement', 'Protection of Proprietary Information', `
+    <p class="policy-intro">This Confidentiality Agreement is entered into between <strong>${h.cand}</strong> ("Employee") and Total Recording Services ("Company") as a condition of employment.</p>
+    <div class="section-heading">1. Definition of Confidential Information</div>
+    <div class="clause">
+      <p class="body-text">"Confidential Information" means any non-public information relating to the Company's business, including but not limited to: client lists and contact information; pricing structures and rate cards; vendor relationships and negotiated terms; internal sales scripts, playbooks, and training materials; software, systems, and operational processes; financial data; and any other information the Company designates as confidential.</p>
+    </div>
+    <div class="section-heading">2. Employee Obligations</div>
+    <div class="clause">
+      <ul class="policy-list">
+        <li>Employee will hold all Confidential Information in strict confidence and will not disclose it to any third party without prior written consent of the Company.</li>
+        <li>Employee will use Confidential Information solely for the purpose of performing their duties at the Company.</li>
+        <li>Employee will immediately notify the Company of any unauthorized disclosure or use of Confidential Information.</li>
+        <li>Upon termination of employment, Employee will immediately return or destroy all documents and materials containing Confidential Information.</li>
+      </ul>
+    </div>
+    <div class="section-heading">3. Duration</div>
+    <p class="body-text">These obligations survive the termination of employment and continue indefinitely with respect to trade secrets, and for a period of three (3) years with respect to other Confidential Information.</p>
+    <div class="section-heading">4. Permitted Disclosures</div>
+    <p class="body-text">Nothing in this Agreement prohibits Employee from disclosing information as required by law or court order, or from reporting potential violations to relevant governmental authorities.</p>
+  `);
+
+  const conduct = legalDoc('conduct', 'Code of Conduct', 'Workplace Standards &amp; Expectations', `
+    <p class="policy-intro">This Code of Conduct sets forth the professional standards expected of all employees at Total Recording Services. By signing below, Employee acknowledges having read, understood, and agreed to adhere to these standards.</p>
+    <div class="section-heading">Attendance &amp; Punctuality</div>
+    <div class="clause">
+      <ul class="policy-list">
+        <li>Core hours are <strong>8:30 AM – 5:00 PM, Monday through Friday</strong>. Consistent punctuality is required.</li>
+        <li>Occasional evening client calls (2–3 times per month) are a standard expectation of the role.</li>
+        <li>Absences must be communicated to your direct manager before the start of the business day.</li>
+      </ul>
+    </div>
+    <div class="section-heading">CRM &amp; Activity Logging</div>
+    <div class="clause">
+      <ul class="policy-list">
+        <li>All client interactions — calls, emails, and meetings — must be logged in Odoo CRM on the same day they occur.</li>
+        <li>Pipeline and task records must be kept current; delinquent CRM hygiene is a performance issue.</li>
+        <li>Client data is Company property and must not be exported or transferred to personal devices or accounts.</li>
+      </ul>
+    </div>
+    <div class="section-heading">Professional Communication</div>
+    <div class="clause">
+      <ul class="policy-list">
+        <li>All external communications (email, phone, in-person) must reflect professionally on the Company.</li>
+        <li>Internal Slack/messaging channels must be used appropriately and responsively during business hours.</li>
+        <li>Sales scripts, pricing, and Company processes must not be shared externally without authorization.</li>
+      </ul>
+    </div>
+    <div class="section-heading">Performance Standards</div>
+    <div class="clause">
+      <ul class="policy-list">
+        <li>Employees are expected to meet or exceed daily activity targets (calls, follow-ups) as defined by management.</li>
+        <li>Participation in training, coaching, and performance review sessions is mandatory.</li>
+        <li>Conduct that is dishonest, disrespectful, or harmful to colleagues or clients will result in immediate disciplinary action.</li>
+      </ul>
+    </div>
+  `);
+
+  win.document.write(`<!DOCTYPE html><html><head><title>Legal Package — ${h.cand}</title>
+  <style>${obDocStyles()}</style></head>
+  <body>${noncompete}${atwill}${nda}${conduct}
+  <div style="max-width:720px;margin:0 auto;padding:20px 60px;">
+    <button onclick="window.print()" style="padding:10px 22px;background:#1a3a5c;color:#c8a84b;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:14px;font-family:Arial,sans-serif;">🖨 Print All / Save as PDF</button>
+  </div>
+  </body></html>`);
+  win.document.close(); win.focus();
+}
+
+// ── Print Full Hire Package (Offer + all Legal docs) ──
+function obPrintFullPackage() {
+  const h = obGetHeader();
+  // Just open both in sequence — offer letter first, then legal pack
+  obPrintOfferLetter();
+  setTimeout(() => obPrintLegalPackage(), 400);
+}
+
+
+// ══════ DEV MODE — triple-click TRS logo ══════
+let _devClicks = 0, _devTimer = null;
+function devTripleClick() {
+  _devClicks++;
+  clearTimeout(_devTimer);
+  if (_devClicks >= 3) {
+    _devClicks = 0;
+    devActivateManager();
+    return;
+  }
+  _devTimer = setTimeout(() => { _devClicks = 0; }, 600);
+}
+function devActivateManager() {
+  currentUserName = 'Dev Manager';
+  currentRole = 'manager';
+  setManagerTabs(true);
+  applyUserSession();
+  document.getElementById('onloadOverlay').style.display = 'none';
+  // Flash the logo gold as feedback
+  const logos = [document.getElementById('navLogo'), document.getElementById('onloadLogo')];
+  logos.forEach(el => {
+    if (!el) return;
+    const orig = el.style.background;
+    el.style.background = '#1d6b4a';
+    el.style.color = '#fff';
+    setTimeout(() => { el.style.background = ''; el.style.color = ''; }, 600);
+  });
+}
 
 </script>
 </body>

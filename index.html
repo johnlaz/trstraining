@@ -1743,7 +1743,190 @@ body.dark .email-pre{background:#151820;}
       <button class="deploy-button" onclick="deployGenerateCard()">✓ Generate Welcome Card</button>
       <button class="deploy-button secondary" onclick="deployResetForm()">Clear Form</button>
     </div>
+    <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:12px;">
+      <button onclick="document.getElementById('sopModal').style.display='flex'" style="background:rgba(200,168,75,.12);color:var(--gold);border:1.5px solid rgba(200,168,75,.3);border-radius:10px;display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;padding:9px 16px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;" onmouseover="this.style.background='rgba(200,168,75,.2)'" onmouseout="this.style.background='rgba(200,168,75,.12)'">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="2" width="14" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M7 7h6M7 10h6M7 13h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        iPad Deployment SOP
+      </button>
+      <span style="font-size:11px;color:var(--muted);font-style:italic;">Internal use only</span>
+    </div>
   </div>
+
+<!-- ══════════ SOP MODAL ══════════ -->
+<div id="sopModal" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(10,15,30,.75);backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--white);border-radius:18px;border:1.5px solid var(--border);width:100%;max-width:720px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.4);overflow:hidden;">
+
+    <!-- Modal Header -->
+    <div style="background:var(--navy);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:2px solid var(--gold);">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <img src="data:image/png;base64,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" alt="TRS" width="36" height="36" style="border-radius:8px;flex-shrink:0;">
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#f8f6f1;letter-spacing:.01em;">TRS iPad Deployment SOP</div>
+          <div style="font-size:11px;color:rgba(200,168,75,.7);font-family:'DM Mono',monospace;margin-top:1px;">INTERNAL — FINALIZED HYBRID METHOD</div>
+        </div>
+      </div>
+      <button onclick="document.getElementById('sopModal').style.display='none'" style="background:rgba(255,255,255,.08);border:none;color:rgba(248,246,241,.6);font-size:22px;line-height:1;width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.background='rgba(255,255,255,.18)';this.style.color='#f8f6f1'" onmouseout="this.style.background='rgba(255,255,255,.08)';this.style.color='rgba(248,246,241,.6)'">×</button>
+    </div>
+
+    <!-- Scrollable Content -->
+    <div style="overflow-y:auto;padding:24px;flex:1;">
+
+      <!-- Phase 1 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+          <div style="width:26px;height:26px;background:var(--navy);border:1.5px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;">1</div>
+          <div style="font-size:13px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.06em;">Preparation — Apple Business Manager</div>
+        </div>
+        <div style="background:var(--gold-pale);border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:12px 16px;font-size:12.5px;color:var(--text);line-height:1.7;margin-bottom:10px;">
+          Before touching the hardware, ensure the device is already known to the system.
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <label style="display:flex;gap:10px;align-items:flex-start;background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;transition:border-color .15s;" class="sop-item">
+            <input type="checkbox" style="display:none;" onchange="sopCheck(this)">
+            <div class="sop-box" style="width:18px;height:18px;border:1.5px solid var(--gold);border-radius:4px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .15s;"></div>
+            <div><div class="sop-title" style="font-size:12.5px;font-weight:600;color:var(--navy);margin-bottom:2px;">Device Assignment</div><div style="font-size:12px;color:var(--muted);line-height:1.6;">In <strong>Devices › Inventory</strong>, confirm the serial number is assigned to the <strong>"Built-in Device Management"</strong> service.</div></div>
+          </label>
+          <label style="display:flex;gap:10px;align-items:flex-start;background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;transition:border-color .15s;" class="sop-item">
+            <input type="checkbox" style="display:none;" onchange="sopCheck(this)">
+            <div class="sop-box" style="width:18px;height:18px;border:1.5px solid var(--gold);border-radius:4px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .15s;"></div>
+            <div><div class="sop-title" style="font-size:12.5px;font-weight:600;color:var(--navy);margin-bottom:2px;">Blueprint Assignment</div><div style="font-size:12px;color:var(--muted);line-height:1.6;">Ensure the device is linked to the <strong>TRS Master Blueprint</strong>.</div></div>
+          </label>
+          <label style="display:flex;gap:10px;align-items:flex-start;background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;transition:border-color .15s;" class="sop-item">
+            <input type="checkbox" style="display:none;" onchange="sopCheck(this)">
+            <div class="sop-box" style="width:18px;height:18px;border:1.5px solid var(--gold);border-radius:4px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .15s;"></div>
+            <div><div class="sop-title" style="font-size:12.5px;font-weight:600;color:var(--navy);margin-bottom:2px;">License Check</div><div style="font-size:12px;color:var(--muted);line-height:1.6;">Verify <strong>Odoo</strong> and <strong>Yahoo Mail</strong> have available licenses under <strong>Apps and Books</strong>.</div></div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Phase 2 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+          <div style="width:26px;height:26px;background:var(--navy);border:1.5px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;">2</div>
+          <div style="font-size:13px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.06em;">Initial Setup &amp; Enrollment</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <label style="display:flex;gap:10px;align-items:flex-start;background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;" class="sop-item">
+            <input type="checkbox" style="display:none;" onchange="sopCheck(this)">
+            <div class="sop-box" style="width:18px;height:18px;border:1.5px solid var(--gold);border-radius:4px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .15s;"></div>
+            <div style="display:flex;gap:8px;align-items:flex-start;flex:1;"><div style="width:20px;height:20px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--gold);flex-shrink:0;margin-top:1px;">1</div><div><div class="sop-title" style="font-size:12.5px;font-weight:600;color:var(--navy);margin-bottom:2px;">Power on &amp; connect to Wi-Fi</div><div style="font-size:12px;color:var(--muted);line-height:1.6;">Power on the new iPad and connect it to Wi-Fi.</div></div></div>
+          </label>
+          <label style="display:flex;gap:10px;align-items:flex-start;background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;" class="sop-item">
+            <input type="checkbox" style="display:none;" onchange="sopCheck(this)">
+            <div class="sop-box" style="width:18px;height:18px;border:1.5px solid var(--gold);border-radius:4px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .15s;"></div>
+            <div style="display:flex;gap:8px;align-items:flex-start;flex:1;"><div style="width:20px;height:20px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--gold);flex-shrink:0;margin-top:1px;">2</div><div><div class="sop-title" style="font-size:12.5px;font-weight:600;color:var(--navy);margin-bottom:2px;">Follow setup prompts</div><div style="font-size:12px;color:var(--muted);line-height:1.6;">Continue through the on-screen prompts until the <strong>Remote Management</strong> screen appears.</div></div></div>
+          </label>
+          <label style="display:flex;gap:10px;align-items:flex-start;background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;" class="sop-item">
+            <input type="checkbox" style="display:none;" onchange="sopCheck(this)">
+            <div class="sop-box" style="width:18px;height:18px;border:1.5px solid var(--gold);border-radius:4px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .15s;"></div>
+            <div style="display:flex;gap:8px;align-items:flex-start;flex:1;"><div style="width:20px;height:20px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--gold);flex-shrink:0;margin-top:1px;">3</div><div><div class="sop-title" style="font-size:12.5px;font-weight:600;color:var(--navy);margin-bottom:2px;">Enroll the iPad</div><div style="font-size:12px;color:var(--muted);line-height:1.6;">Tap <strong>"Enroll my iPad."</strong> The device will automatically pull Odoo, Yahoo Mail, Wallpaper/Lock Screen, and Restrictions from the Blueprint.</div></div></div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Phase 3 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+          <div style="width:26px;height:26px;background:var(--navy);border:1.5px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;">3</div>
+          <div style="font-size:13px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.06em;">Manual App Installation — Sangoma &amp; Others</div>
+        </div>
+        <div style="background:var(--red-light);border-left:3px solid var(--red);border-radius:0 10px 10px 0;padding:12px 16px;font-size:12px;color:#5a1010;line-height:1.7;margin-bottom:10px;">
+          <strong>⚠ Note:</strong> Sangoma is <em>not</em> pushed via MDM. The user must complete these steps themselves using a personal Apple ID.
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <label style="display:flex;gap:10px;align-items:flex-start;background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;" class="sop-item">
+            <input type="checkbox" style="display:none;" onchange="sopCheck(this)">
+            <div class="sop-box" style="width:18px;height:18px;border:1.5px solid var(--gold);border-radius:4px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .15s;"></div>
+            <div style="display:flex;gap:8px;align-items:flex-start;flex:1;"><div style="width:20px;height:20px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--gold);flex-shrink:0;margin-top:1px;">1</div><div><div class="sop-title" style="font-size:12.5px;font-weight:600;color:var(--navy);margin-bottom:2px;">Sign into App Store with personal Apple ID</div><div style="font-size:12px;color:var(--muted);line-height:1.6;">The user must sign in with a <strong>personal Apple ID</strong>. If they don't have one, they must create it first.</div></div></div>
+          </label>
+          <label style="display:flex;gap:10px;align-items:flex-start;background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;" class="sop-item">
+            <input type="checkbox" style="display:none;" onchange="sopCheck(this)">
+            <div class="sop-box" style="width:18px;height:18px;border:1.5px solid var(--gold);border-radius:4px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .15s;"></div>
+            <div style="display:flex;gap:8px;align-items:flex-start;flex:1;"><div style="width:20px;height:20px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--gold);flex-shrink:0;margin-top:1px;">2</div><div><div class="sop-title" style="font-size:12.5px;font-weight:600;color:var(--navy);margin-bottom:2px;">Download Sangoma Talk</div><div style="font-size:12px;color:var(--muted);line-height:1.6;">Search the App Store for <strong>"Sangoma Talk"</strong> and download it manually.</div></div></div>
+          </label>
+          <label style="display:flex;gap:10px;align-items:flex-start;background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;" class="sop-item">
+            <input type="checkbox" style="display:none;" onchange="sopCheck(this)">
+            <div class="sop-box" style="width:18px;height:18px;border:1.5px solid var(--gold);border-radius:4px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .15s;"></div>
+            <div style="display:flex;gap:8px;align-items:flex-start;flex:1;"><div style="width:20px;height:20px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--gold);flex-shrink:0;margin-top:1px;">3</div><div><div class="sop-title" style="font-size:12.5px;font-weight:600;color:var(--navy);margin-bottom:2px;">Note for future updates</div><div style="font-size:12px;color:var(--muted);line-height:1.6;">Apps installed with a personal Apple ID will require that same ID for all future updates.</div></div></div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Phase 4 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+          <div style="width:26px;height:26px;background:var(--navy);border:1.5px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;">4</div>
+          <div style="font-size:13px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.06em;">TRS Blueprint Maintenance</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;"><div style="font-size:12.5px;font-weight:600;color:var(--navy);margin-bottom:4px;">➕ To Add an App</div><div style="font-size:12px;color:var(--muted);line-height:1.6;">Add the app to <strong>Apps and Books</strong> (to acquire licenses), then add it to the Blueprint.</div></div>
+          <div style="background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;"><div style="font-size:12.5px;font-weight:600;color:var(--navy);margin-bottom:4px;">🚫 To Restrict Apps</div><div style="font-size:12px;color:var(--muted);line-height:1.6;">Use the <strong>App Access</strong> configuration in the Blueprint. <span style="color:var(--red);font-weight:600;">Crucial:</span> Ensure the App Store is <em>NOT</em> blocked — otherwise users cannot manually install Sangoma.</div></div>
+          <div style="background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;"><div style="font-size:12.5px;font-weight:600;color:var(--navy);margin-bottom:4px;">🎨 To Update Branding</div><div style="font-size:12px;color:var(--muted);line-height:1.6;">Upload a new <code style="background:var(--border);padding:1px 5px;border-radius:4px;font-family:'DM Mono',monospace;font-size:11px;">.mobileconfig</code> file to the <strong>Custom Configuration</strong> section of the Blueprint.</div></div>
+        </div>
+      </div>
+
+      <!-- Hybrid Summary -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+          <div style="width:26px;height:26px;background:var(--navy);border:1.5px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--gold);flex-shrink:0;">ℹ</div>
+          <div style="font-size:13px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.06em;">Summary — Hybrid Logic</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="background:var(--green-light);border:1px solid rgba(29,107,74,.2);border-radius:10px;padding:14px;"><div style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">✓ Managed Apps</div><div style="font-size:12px;color:var(--text);line-height:1.6;"><strong>Odoo, Yahoo Mail</strong> — Owned by TRS. Install automatically, no user Apple ID required.</div></div>
+          <div style="background:var(--gold-pale);border:1px solid rgba(200,168,75,.25);border-radius:10px;padding:14px;"><div style="font-size:11px;font-weight:700;color:#7a5c00;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">⚙ Unmanaged Apps</div><div style="font-size:12px;color:var(--text);line-height:1.6;"><strong>Sangoma</strong> — Owned by the user's Apple ID. User is responsible for installation.</div></div>
+          <div style="background:var(--cream);border:1px solid var(--border);border-radius:10px;padding:14px;grid-column:1/-1;"><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">🗑 Web Clips</div><div style="font-size:12px;color:var(--text);line-height:1.6;">Removed to clean up the home screen and prevent confusion with native apps.</div></div>
+        </div>
+      </div>
+
+      <!-- Tech Support -->
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+          <div style="width:26px;height:26px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;">!</div>
+          <div style="font-size:13px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.06em;">Tech Support Checklist</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="background:var(--red-light);border:1px solid rgba(139,32,32,.15);border-radius:10px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;"><div style="font-size:15px;flex-shrink:0;">📱</div><div><div style="font-size:12.5px;font-weight:600;color:var(--red);margin-bottom:2px;">App not loading?</div><div style="font-size:12px;color:var(--text);line-height:1.6;">Go to <strong>Settings › General › Software Update</strong> to force a device check-in.</div></div></div>
+          <div style="background:var(--red-light);border:1px solid rgba(139,32,32,.15);border-radius:10px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;"><div style="font-size:15px;flex-shrink:0;">🛑</div><div><div style="font-size:12.5px;font-weight:600;color:var(--red);margin-bottom:2px;">Can't open App Store?</div><div style="font-size:12px;color:var(--text);line-height:1.6;">Check the Blueprint to confirm <strong>"Installing Apps"</strong> is allowed in restrictions.</div></div></div>
+          <div style="background:var(--red-light);border:1px solid rgba(139,32,32,.15);border-radius:10px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;"><div style="font-size:15px;flex-shrink:0;">⚠️</div><div><div style="font-size:12.5px;font-weight:600;color:var(--red);margin-bottom:2px;">404 Error?</div><div style="font-size:12px;color:var(--text);line-height:1.6;">Usually means the iPad is on an outdated iOS version, or the license hasn't synced yet.</div></div></div>
+        </div>
+      </div>
+
+    </div><!-- end scroll -->
+
+    <!-- Modal Footer -->
+    <div style="padding:16px 24px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--cream);">
+      <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;">TRS INTERNAL SOP · HYBRID DEPLOYMENT</div>
+      <button onclick="document.getElementById('sopModal').style.display='none'" style="padding:9px 22px;background:var(--navy);color:var(--gold);border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;" onmouseover="this.style.background='#0d1e33'" onmouseout="this.style.background='var(--navy)'">Done</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function sopCheck(checkbox) {
+  const label = checkbox.closest('label');
+  const box = label.querySelector('.sop-box');
+  const title = label.querySelector('.sop-title');
+  const checked = checkbox.checked;
+  if (checked) {
+    box.style.background = '#1d6b4a';
+    box.style.borderColor = '#1d6b4a';
+    box.innerHTML = '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5L4 7.5L8.5 2.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    title.style.textDecoration = 'line-through';
+    title.style.color = 'var(--muted)';
+    label.style.borderColor = 'rgba(29,107,74,.35)';
+    label.style.background = 'rgba(29,107,74,.04)';
+  } else {
+    box.style.background = '';
+    box.style.borderColor = 'var(--gold)';
+    box.innerHTML = '';
+    title.style.textDecoration = '';
+    title.style.color = 'var(--navy)';
+    label.style.borderColor = 'var(--border)';
+    label.style.background = 'var(--cream)';
+  }
+}
+document.getElementById('sopModal').addEventListener('click', function(e){ if(e.target===this) this.style.display='none'; });
+</script>
 
   <div id="deployCardContainer" style="display:none;">
     <div class="deploy-preview" id="deployCard">

@@ -13,10 +13,92 @@ nav{position:sticky;top:0;z-index:200;background:var(--navy);height:54px;display
 .nav-brand{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .nav-logo{width:30px;height:30px;background:var(--gold);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--navy);}
 .nav-title{font-size:14px;font-weight:600;color:#f8f6f1;letter-spacing:.02em;}
-.nav-tabs{display:flex;gap:2px;flex-shrink:0;}
-.nav-tab{padding:5px 11px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;color:rgba(248,246,241,.55);border:none;background:transparent;transition:all .18s;font-family:'DM Sans',sans-serif;}
+.nav-tabs{display:flex;gap:2px;flex-shrink:0;overflow-x:auto;overflow-y:hidden;flex:1;min-width:0;padding-right:8px;}
+.nav-tabs::-webkit-scrollbar{height:3px;}
+.nav-tabs::-webkit-scrollbar-track{background:transparent;}
+.nav-tabs::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2);border-radius:3px;}
+.nav-tabs::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.4);}
+.nav-tab{padding:5px 11px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;color:rgba(248,246,241,.55);border:none;background:transparent;transition:all .18s;font-family:'DM Sans',sans-serif;white-space:nowrap;flex-shrink:0;}
 .nav-tab:hover{color:#f8f6f1;background:rgba(255,255,255,.08);}
 .nav-tab.active{color:var(--gold);background:rgba(200,168,75,.13);}
+/* Mobile: tighter nav */
+@media(max-width:768px){
+  nav{padding:0 12px;height:50px;}
+  .nav-title{font-size:12px;}
+  .nav-logo{width:26px;height:26px;font-size:10px;}
+  .nav-tab{padding:4px 8px;font-size:11px;}
+  .nav-tabs{gap:0;padding-right:4px;}
+}
+@media(max-width:600px){
+  nav{padding:0 10px;height:48px;}
+  .nav-title{font-size:11px;display:none;}
+  .nav-logo{width:24px;height:24px;font-size:9px;}
+  .nav-tab{padding:3px 6px;font-size:10px;}
+}
+.deploy-form{background:var(--white);border-radius:14px;border:1.5px solid var(--border);padding:26px;margin-bottom:28px;max-width:680px;}
+.deploy-form-section{margin-bottom:22px;}
+.deploy-form-section:last-child{margin-bottom:0;}
+.deploy-section-title{font-size:12px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.deploy-form-group{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.deploy-form-group.full{grid-template-columns:1fr;}
+.deploy-input{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--cream);outline:none;transition:all .2s;}
+.deploy-input:focus{border-color:var(--navy);background:var(--white);}
+.deploy-input::placeholder{color:var(--muted);}
+.deploy-label{font-size:13px;font-weight:500;color:var(--navy);margin-bottom:5px;display:block;}
+.deploy-button{padding:11px 22px;background:var(--navy);color:var(--gold);border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;}
+.deploy-button:hover{background:var(--navy-dark);}
+.deploy-button.secondary{background:var(--cream);color:var(--navy);border:1.5px solid var(--border);}
+.deploy-button.secondary:hover{background:var(--border);}
+.deploy-actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;}
+.deploy-preview{background:var(--cream);border-radius:14px;padding:24px;margin-top:20px;max-width:680px;border:1.5px solid var(--border);box-shadow:inset 0 1px 3px rgba(0,0,0,.05);}
+/* Mobile: form fields collapse to single column */
+@media(max-width:720px){
+  .deploy-form-group{grid-template-columns:1fr !important;}
+  .deploy-actions{flex-direction:column;}
+  .deploy-button{width:100%;}
+  .deploy-button.secondary{width:100%;}
+}
+/* Tablet & below */
+@media(max-width:768px){
+  .deploy-preview{padding:16px;}
+  .card-item{flex-direction:column;gap:4px;}
+  .card-item-label{min-width:auto;}
+  .deploy-form{max-width:100%;}
+}
+/* Small mobile */
+@media(max-width:600px){
+  .deploy-form{padding:16px;margin-bottom:20px;}
+  .deploy-input{font-size:16px;padding:10px 12px;}
+  .deploy-section-title{font-size:11px;margin-bottom:10px;}
+  .deploy-label{font-size:12px;margin-bottom:4px;}
+  .deploy-button{padding:10px 18px;font-size:12px;}
+  .deploy-preview{padding:14px;margin-top:16px;}
+  .card-header{margin-bottom:16px;padding-bottom:12px;}
+  .card-section{margin-bottom:16px;}
+  .card-section-title{font-size:10px;margin-bottom:8px;}
+  .card-item{font-size:12px;margin-bottom:6px;}
+  .card-item-label{font-size:11px;min-width:100px;}
+  .card-item-value{font-size:12px;}
+  .card-highlight{font-size:11px;padding:10px;margin-bottom:10px;}
+  .card-footer{font-size:9px;margin-top:16px;padding-top:12px;}
+  .card-title{font-size:16px;}
+  .card-subtitle{font-size:11px;}
+  .card-employee{font-size:12px;margin-top:8px;}
+  ul{margin-left:16px;font-size:11px;}
+  li{margin-bottom:4px;}
+  p{font-size:11px;}
+}
+.card-header{text-align:center;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid var(--gold);}
+.card-title{font-size:18px;font-weight:600;color:var(--navy);margin-bottom:4px;}
+.card-subtitle{font-size:13px;color:var(--muted);}
+.card-employee{font-size:14px;font-weight:500;color:var(--navy);margin-top:12px;text-align:center;}
+.card-section{margin-bottom:20px;}
+.card-section-title{font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.card-item{display:flex;gap:12px;margin-bottom:8px;font-size:13px;line-height:1.5;}
+.card-item-label{font-weight:600;color:var(--navy);min-width:140px;}
+.card-item-value{color:var(--text);flex:1;}
+.card-highlight{background:var(--gold-pale);border-left:3px solid var(--gold);padding:12px;border-radius:6px;margin-bottom:12px;font-size:13px;line-height:1.5;word-break:break-all;}
+.card-footer{text-align:center;margin-top:24px;padding-top:16px;border-top:2px solid var(--gold);font-size:11px;color:var(--muted);}
 /* SEARCH BAR IN NAV */
 .nav-search-wrap{flex:1;max-width:260px;position:relative;}
 .nav-search-input{width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:6px 36px 6px 32px;font-size:13px;color:#f8f6f1;font-family:'DM Sans',sans-serif;outline:none;transition:all .2s;cursor:pointer;}
@@ -249,7 +331,27 @@ body.dark .onload-modal,.dark .search-modal{background:#1e2330;}
 .sbadge.good{background:var(--green-light);color:var(--green);}
 .sbadge.risk{background:var(--red-light);color:var(--red);}
 .sbadge.new{background:#e8f0fb;color:#1a3a8c;}
-@media(max-width:900px){.cal-grid,.pb-grid{grid-template-columns:1fr 1fr;}.mgr-stats{grid-template-columns:1fr 1fr;}.view{padding:20px 16px;}nav{padding:0 16px;}.nav-tabs .nav-tab{padding:5px 9px;font-size:12px;}}
+@media(max-width:900px){.cal-grid,.pb-grid{grid-template-columns:1fr 1fr;}.mgr-stats{grid-template-columns:1fr 1fr;}.view{padding:20px 16px;}.nav-search-wrap{display:none;}}
+/* MOBILE RESPONSIVE — Equipment Deploy */
+@media(max-width:768px){
+  .deploy-form-group{grid-template-columns:1fr;}
+  .deploy-actions{flex-direction:column;}
+  .deploy-button{width:100%;}
+  .deploy-preview{padding:16px;}
+  .card-item{flex-direction:column;gap:4px;}
+  .card-item-label{min-width:auto;}
+}
+@media(max-width:600px){
+  .deploy-form{padding:16px;}
+  .deploy-section-title{font-size:11px;}
+  .card-section-title{font-size:10px;}
+  .card-item{font-size:12px;}
+  .card-highlight{font-size:12px;padding:10px;}
+  .card-footer{font-size:10px;}
+  .card-title{font-size:16px;}
+  .card-subtitle{font-size:12px;}
+  .card-employee{font-size:13px;}
+}
 @media(max-width:600px){.cal-grid,.pb-grid{grid-template-columns:1fr;}.mgr-stats{grid-template-columns:1fr;}}
 
 /* SEARCH BAR IN NAV */
@@ -501,6 +603,7 @@ body.dark .email-pre{background:#151820;}
     <button class="nav-tab mgr-only" onclick="showView('prescreen',this)" id="tab-prescreen" style="display:none;">Pre-Screen</button>
     <button class="nav-tab mgr-only" onclick="showView('interview',this)" id="tab-interview" style="display:none;">Interview</button>
     <button class="nav-tab mgr-only" onclick="showView('onboarding',this)" id="tab-onboarding" style="display:none;">Onboarding</button>
+    <button class="nav-tab mgr-only" onclick="showView('deploy',this)" id="tab-deploy" style="display:none;">Deploy</button>
     <button class="nav-tab mgr-only" onclick="showView('videos',this)" id="tab-videos" style="display:none;">📹 Videos</button>
   </div>
   <div style="display:flex;align-items:center;gap:6px;">
@@ -1570,6 +1673,85 @@ body.dark .email-pre{background:#151820;}
     <div class="ob-modal-btns">
       <button class="ob-modal-cancel" onclick="closeObSignModal()">Cancel</button>
       <button class="ob-modal-confirm" onclick="confirmObSign()">✍ Confirm Signature</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ EQUIPMENT DEPLOY VIEW ══════════ -->
+<div id="view-deploy" class="view">
+  <div class="page-header">
+    <h1>Equipment Deploy</h1>
+    <p>Generate a professional welcome card for remote employees. Fill in employee details and print or export as PNG.</p>
+  </div>
+  
+  <div class="deploy-form">
+    <div class="deploy-form-section">
+      <div class="deploy-section-title">Employee Information</div>
+      <div class="deploy-form-group">
+        <div>
+          <label class="deploy-label">First & Last Name</label>
+          <input type="text" id="deployName" class="deploy-input" placeholder="John Smith">
+        </div>
+        <div>
+          <label class="deploy-label">Email Address</label>
+          <input type="email" id="deployEmail" class="deploy-input" placeholder="john@trsav.com">
+        </div>
+      </div>
+      <div class="deploy-form-group">
+        <div>
+          <label class="deploy-label">Odoo Username / Email</label>
+          <input type="email" id="deployOdooEmail" class="deploy-input" placeholder="john@trsav.com">
+        </div>
+        <div>
+          <label class="deploy-label">Odoo Default Password</label>
+          <input type="text" id="deployOdooPass" class="deploy-input" placeholder="(provided by Odoo admin)">
+        </div>
+      </div>
+      <div class="deploy-form-group">
+        <div>
+          <label class="deploy-label">Sangoma Extension</label>
+          <input type="text" id="deploySangoma" class="deploy-input" placeholder="e.g., 2105">
+        </div>
+        <div>
+          <label class="deploy-label">iPad Model / Serial</label>
+          <input type="text" id="deployIpad" class="deploy-input" placeholder="Apple iPad A3354">
+        </div>
+      </div>
+      <div class="deploy-form-group full">
+        <div>
+          <label class="deploy-label">Technical Support Contact</label>
+          <input type="email" id="deploySupportEmail" class="deploy-input" placeholder="john@trsav.com">
+        </div>
+      </div>
+    </div>
+
+    <div class="deploy-form-section">
+      <div class="deploy-section-title">Support Details (Optional)</div>
+      <div class="deploy-form-group">
+        <div>
+          <label class="deploy-label">Support Phone</label>
+          <input type="tel" id="deploySupportPhone" class="deploy-input" placeholder="(407) 331-8622 Opt. #2">
+        </div>
+        <div>
+          <label class="deploy-label">FTS Telecom Contact</label>
+          <input type="text" id="deployFtsContact" class="deploy-input" placeholder="FTS Telecom">
+        </div>
+      </div>
+    </div>
+
+    <div class="deploy-actions">
+      <button class="deploy-button" onclick="deployGenerateCard()">✓ Generate Welcome Card</button>
+      <button class="deploy-button secondary" onclick="deployResetForm()">Clear Form</button>
+    </div>
+  </div>
+
+  <div id="deployCardContainer" style="display:none;">
+    <div class="deploy-preview" id="deployCard">
+      <!-- Card will render here -->
+    </div>
+    <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
+      <button class="deploy-button" onclick="deployPrintCard()">🖨 Print Welcome Card</button>
+      <button class="deploy-button secondary" onclick="deployExportPNG()">📸 Export as PNG</button>
     </div>
   </div>
 </div>
@@ -5462,6 +5644,204 @@ function obPrintFullPackage() {
   setTimeout(() => obPrintLegalPackage(), 400);
 }
 
+
+// ══════ EQUIPMENT DEPLOY FUNCTIONS ══════
+function deployGenerateCard() {
+  const name = document.getElementById('deployName').value.trim();
+  const email = document.getElementById('deployEmail').value.trim();
+  const odooEmail = document.getElementById('deployOdooEmail').value.trim();
+  const odooPass = document.getElementById('deployOdooPass').value.trim();
+  const sangoma = document.getElementById('deploySangoma').value.trim();
+  const ipad = document.getElementById('deployIpad').value.trim();
+  const supportEmail = document.getElementById('deploySupportEmail').value.trim();
+  const supportPhone = document.getElementById('deploySupportPhone').value.trim();
+  const ftsContact = document.getElementById('deployFtsContact').value.trim();
+
+  if (!name || !email) {
+    alert('Please enter at least Name and Email address.');
+    return;
+  }
+
+  const defaultIpad = ipad || 'Apple iPad A3354';
+  const defaultSupport = supportEmail || 'john@trsav.com';
+  const defaultPhone = supportPhone || '(407) 331-8622 Opt. #2';
+  const defaultFts = ftsContact || 'FTS Telecom';
+
+  let html = `
+    <div class="card-header">
+      <div class="card-title">Total Rental Solutions</div>
+      <div class="card-subtitle">Sales iPad Welcome Guide</div>
+      <div class="card-employee">Welcome ${name}! 👋</div>
+    </div>
+
+    <div class="card-section">
+      <div class="card-section-title">1. Package Contents</div>
+      <p style="font-size:12px;color:var(--text);margin-bottom:10px;">Please verify your kit contains the following:</p>
+      <div class="card-item">
+        <div class="card-item-label">iPad</div>
+        <div class="card-item-value">${defaultIpad} (Pre-enrolled)</div>
+      </div>
+      <div class="card-item">
+        <div class="card-item-label">Headset</div>
+        <div class="card-item-value">Poly 5200 (Sangoma-Compatible)</div>
+      </div>
+      <div class="card-item">
+        <div class="card-item-label">Accessories</div>
+        <div class="card-item-value">Portfolio Case, Keyboard, USB-C Adapter &amp; Cable</div>
+      </div>
+    </div>
+
+    <div class="card-section">
+      <div class="card-section-title">2. Your Credentials</div>
+      <div class="card-item">
+        <div class="card-item-label">iPad Passcode</div>
+        <div class="card-item-value">Pre-configured by IT</div>
+      </div>
+      <div class="card-item">
+        <div class="card-item-label">Odoo CRM Email</div>
+        <div class="card-item-value">${odooEmail || '(Email provided)'}</div>
+      </div>
+      <div class="card-item">
+        <div class="card-item-label">Odoo Password</div>
+        <div class="card-item-value">${odooPass ? '••••••••' : '(Provided by admin)'}</div>
+      </div>
+      <div class="card-item">
+        <div class="card-item-label">Sangoma Extension</div>
+        <div class="card-item-value">${sangoma || '(See activation below)'}</div>
+      </div>
+    </div>
+
+    <div class="card-section">
+      <div class="card-section-title">3. Your Business Apps</div>
+      <ul style="font-size:13px;margin-left:16px;color:var(--text);line-height:1.6;">
+        <li><strong>Odoo:</strong> Your central hub for CRM, sales, orders &amp; employee tools</li>
+        <li><strong>Sangoma Talk:</strong> Your business phone. Set as your default calling app</li>
+        <li><strong>Yahoo Mail:</strong> Company email &amp; notifications (pre-installed)</li>
+      </ul>
+    </div>
+
+    <div class="card-section">
+      <div class="card-section-title">4. Activating Your Business Phone Line</div>
+      <div class="card-highlight">
+        <strong>To use Sangoma Talk:</strong> Open the app and contact <strong>${defaultFts}</strong> at <strong>${defaultPhone}</strong>. Request "Extension activation setup for Sangoma for Total Rental Solutions." Once active, you'll be able to dial internal extensions and make outbound calls.
+      </div>
+    </div>
+
+    <div class="card-section">
+      <div class="card-section-title">5. Equipment Responsibility Agreement</div>
+      <p style="font-size:12px;color:var(--text);line-height:1.6;margin-bottom:10px;">By accepting this kit, you acknowledge that all hardware is the property of Total Rental Solutions, Inc.</p>
+      <ul style="font-size:12px;margin-left:16px;color:var(--text);line-height:1.7;">
+        <li><strong>Upgrades:</strong> Return current kit in good working condition for upgrades (typically every 12-24 months)</li>
+        <li><strong>Termination:</strong> Return entire kit to the main office immediately upon resignation or termination</li>
+        <li><strong>Final Paycheck:</strong> Equipment return in issued condition is required before final paycheck</li>
+      </ul>
+    </div>
+
+    <div class="card-section">
+      <div class="card-section-title">6. Technical Support</div>
+      <div class="card-item">
+        <div class="card-item-label">Contact</div>
+        <div class="card-item-value">${supportEmail}</div>
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin-top:10px;">For software issues, hardware damage, or connectivity problems, reach out for immediate assistance.</p>
+    </div>
+
+    <div class="card-footer">
+      <div style="margin-bottom:12px;"><img src="data:image/png;base64,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" alt="TRS" width="64" height="64" style="border-radius:12px;display:block;margin:0 auto;filter:drop-shadow(0 2px 6px rgba(200,168,75,.35));"></div>
+      Welcome to the TRS team! We're excited to have you on board. Questions? Don't hesitate to reach out.
+    </div>
+  `;
+
+  document.getElementById('deployCard').innerHTML = html;
+  document.getElementById('deployCardContainer').style.display = 'block';
+  document.getElementById('deployCardContainer').scrollIntoView({behavior: 'smooth'});
+}
+
+function deployResetForm() {
+  if (!confirm('Clear all deployment details?')) return;
+  document.getElementById('deployName').value = '';
+  document.getElementById('deployEmail').value = '';
+  document.getElementById('deployOdooEmail').value = '';
+  document.getElementById('deployOdooPass').value = '';
+  document.getElementById('deploySangoma').value = '';
+  document.getElementById('deployIpad').value = '';
+  document.getElementById('deploySupportEmail').value = '';
+  document.getElementById('deploySupportPhone').value = '';
+  document.getElementById('deployFtsContact').value = '';
+  document.getElementById('deployCardContainer').style.display = 'none';
+}
+
+function deployPrintCard() {
+  const name = document.getElementById('deployName').value.trim() || 'New Employee';
+  const w = window.open('', 'printcard', 'width=1000,height=1200');
+  w.document.write(`<!DOCTYPE html><html><head><title>TRS Welcome Card — ${name}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: white; padding: 40px; }
+    .card { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+    .card-header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid #c8a84b; }
+    .card-title { font-size: 22px; font-weight: 700; color: #1a3a5c; }
+    .card-subtitle { font-size: 14px; color: #666; margin-top: 4px; }
+    .card-employee { font-size: 16px; font-weight: 600; color: #1a3a5c; margin-top: 12px; }
+    .card-section { margin-bottom: 24px; }
+    .card-section-title { font-size: 12px; font-weight: 700; color: #1a3a5c; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #ddd; }
+    .card-item { display: flex; gap: 12px; margin-bottom: 8px; font-size: 13px; }
+    .card-item-label { font-weight: 600; color: #1a3a5c; min-width: 140px; }
+    .card-item-value { color: #333; flex: 1; }
+    .card-highlight { background: #faf6eb; border-left: 3px solid #c8a84b; padding: 12px; border-radius: 4px; font-size: 13px; line-height: 1.6; }
+    .card-footer { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 3px solid #c8a84b; font-size: 12px; color: #666; }
+    ul { margin-left: 20px; }
+    li { margin-bottom: 6px; font-size: 13px; line-height: 1.6; }
+    p { font-size: 13px; color: #333; line-height: 1.6; margin-bottom: 10px; }
+    @media print { body { padding: 0; } .card { box-shadow: none; padding: 20px; } }
+  </style>
+  </head><body>`);
+  w.document.write(document.getElementById('deployCard').innerHTML);
+  w.document.write(`</body></html>`);
+  w.document.close();
+  setTimeout(() => w.print(), 500);
+}
+
+async function deployExportPNG() {
+  const name = document.getElementById('deployName').value.trim() || 'trs_welcome_card';
+  const cardEl = document.getElementById('deployCard');
+  
+  // Check for html2canvas library
+  if (typeof html2canvas === 'undefined') {
+    // Fallback: try to load it dynamically
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    script.onload = () => {
+      html2canvas(cardEl, {
+        scale: 2,
+        backgroundColor: '#f5f2eb',
+        logging: false,
+        allowTaint: true,
+        useCORS: true
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = name.replace(/\s+/g, '_') + '_Welcome_Card.png';
+        link.click();
+      }).catch(err => alert('Could not export: ' + err.message));
+    };
+    script.onerror = () => alert('Could not load image library. Try using Print instead.');
+    document.head.appendChild(script);
+  } else {
+    html2canvas(cardEl, {
+      scale: 2,
+      backgroundColor: '#f5f2eb',
+      logging: false,
+      allowTaint: true,
+      useCORS: true
+    }).then(canvas => {
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = name.replace(/\s+/g, '_') + '_Welcome_Card.png';
+      link.click();
+    }).catch(err => alert('Could not export: ' + err.message));
+  }
+}
 
 // ══════ DEV MODE — triple-click TRS logo ══════
 let _devClicks = 0, _devTimer = null;

@@ -51,6 +51,28 @@ nav{position:sticky;top:0;z-index:200;background:var(--navy);height:54px;display
 .deploy-button.secondary:hover{background:var(--border);}
 .deploy-actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;}
 .deploy-preview{background:var(--cream);border-radius:14px;padding:24px;margin-top:20px;max-width:680px;border:1.5px solid var(--border);box-shadow:inset 0 1px 3px rgba(0,0,0,.05);}
+/* DEPLOYMENT CHECKLIST */
+.deploy-checklist{background:var(--white);border-radius:14px;border:1.5px solid var(--border);padding:26px;margin-bottom:28px;max-width:680px;}
+.deploy-checklist-title{font-size:14px;font-weight:600;color:var(--navy);margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid var(--gold);text-transform:uppercase;letter-spacing:.05em;}
+.checklist-item{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;padding:12px;border-radius:10px;background:var(--cream);transition:all .18s;}
+.checklist-item:hover{background:var(--gold-pale);border-left:3px solid var(--gold);padding-left:9px;}
+.checklist-item.completed{background:var(--green-light);opacity:.6;}
+.checklist-item.completed .checklist-text{text-decoration:line-through;color:var(--muted);}
+.checklist-checkbox{flex-shrink:0;width:20px;height:20px;border:1.5px solid var(--border);border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;background:var(--white);transition:all .15s;margin-top:2px;}
+.checklist-checkbox:hover{border-color:var(--navy);background:var(--gold-pale);}
+.checklist-checkbox.checked{background:var(--green);border-color:var(--green);color:var(--white);font-size:12px;font-weight:700;}
+.checklist-content{flex:1;}
+.checklist-text{font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px;}
+.checklist-note{font-size:12px;color:var(--muted);line-height:1.4;}
+.checklist-actions{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;}
+.checklist-action-btn{padding:9px 16px;background:var(--navy);color:var(--gold);border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;}
+.checklist-action-btn:hover{background:var(--navy-dark);}
+.checklist-action-btn.secondary{background:var(--cream);color:var(--navy);border:1.5px solid var(--border);}
+.checklist-action-btn.secondary:hover{background:var(--border);}
+.checklist-progress{margin-bottom:20px;display:flex;align-items:center;gap:12px;}
+.progress-bar{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--green);border-radius:3px;transition:width .3s;}
+.progress-label{font-size:12px;font-weight:600;color:var(--navy);white-space:nowrap;min-width:80px;}
 /* Mobile: form fields collapse to single column */
 @media(max-width:720px){
   .deploy-form-group{grid-template-columns:1fr !important;}
@@ -1743,7 +1765,12 @@ body.dark .email-pre{background:#151820;}
       <button class="deploy-button" onclick="deployGenerateCard()">✓ Generate Welcome Card</button>
       <button class="deploy-button secondary" onclick="deployResetForm()">Clear Form</button>
     </div>
-    <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:12px;">
+    <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <button onclick="document.getElementById('checklistModal').style.display='flex'" style="background:rgba(29,107,74,.12);color:var(--green);border:1.5px solid rgba(29,107,74,.3);border-radius:10px;display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;padding:9px 16px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;" onmouseover="this.style.background='rgba(29,107,74,.2)'" onmouseout="this.style.background='rgba(29,107,74,.12)'">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M7 10l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Pre-Deploy Checklist
+        <span id="checklistBadge" style="background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px;margin-left:2px;display:none;">0/6</span>
+      </button>
       <button onclick="document.getElementById('sopModal').style.display='flex'" style="background:rgba(200,168,75,.12);color:var(--gold);border:1.5px solid rgba(200,168,75,.3);border-radius:10px;display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;padding:9px 16px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;" onmouseover="this.style.background='rgba(200,168,75,.2)'" onmouseout="this.style.background='rgba(200,168,75,.12)'">
         <svg width="14" height="14" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="2" width="14" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M7 7h6M7 10h6M7 13h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
         iPad Deployment SOP
@@ -1751,6 +1778,151 @@ body.dark .email-pre{background:#151820;}
       <span style="font-size:11px;color:var(--muted);font-style:italic;">Internal use only</span>
     </div>
   </div>
+
+<!-- ══════════ CHECKLIST MODAL ══════════ -->
+<div id="checklistModal" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(10,15,30,.75);backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--white);border-radius:18px;border:1.5px solid var(--border);width:100%;max-width:680px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.4);overflow:hidden;">
+
+    <!-- Modal Header -->
+    <div style="background:var(--navy);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:2px solid var(--gold);">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:36px;height:36px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;">📋</div>
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#f8f6f1;letter-spacing:.01em;">Pre-Deploy Checklist</div>
+          <div style="font-size:11px;color:rgba(200,168,75,.7);font-family:'DM Mono',monospace;margin-top:1px;">MANAGER — TASKS TO COMPLETE BEFORE DEPLOY</div>
+        </div>
+      </div>
+      <button onclick="document.getElementById('checklistModal').style.display='none'" style="background:rgba(255,255,255,.08);border:none;color:rgba(248,246,241,.6);font-size:22px;line-height:1;width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.background='rgba(255,255,255,.18)';this.style.color='#f8f6f1'" onmouseout="this.style.background='rgba(255,255,255,.08)';this.style.color='rgba(248,246,241,.6)'">×</button>
+    </div>
+
+    <!-- Scrollable Content -->
+    <div style="overflow-y:auto;padding:24px;flex:1;">
+
+      <div class="checklist-progress">
+        <div class="progress-bar">
+          <div class="progress-fill" id="checklistProgress" style="width: 0%"></div>
+        </div>
+        <div class="progress-label"><span id="checklistCount">0</span>/6</div>
+      </div>
+
+      <div id="checklistContainer">
+        <div class="checklist-item" data-id="apple-mgr">
+          <div class="checklist-checkbox" onclick="toggleChecklistItem(this)"></div>
+          <div class="checklist-content">
+            <div class="checklist-text">Add iPad to Apple Business Manager</div>
+            <div class="checklist-note">Enroll device in ABM and assign to deployment profile. <button type="button" onclick="document.getElementById('checklistModal').style.display='none';document.getElementById('sopModal').style.display='flex';" style="background:none;border:none;color:var(--gold);text-decoration:underline;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:inherit;padding:0;">View iPad Deployment SOP</button></div>
+          </div>
+        </div>
+
+        <div class="checklist-item" data-id="bluetooth">
+          <div class="checklist-checkbox" onclick="toggleChecklistItem(this)"></div>
+          <div class="checklist-content">
+            <div class="checklist-text">Connect all Bluetooth devices</div>
+            <div class="checklist-note">Pair keyboard, mouse, headphones, and any other peripherals</div>
+          </div>
+        </div>
+
+        <div class="checklist-item" data-id="odoo">
+          <div class="checklist-checkbox" onclick="toggleChecklistItem(this)"></div>
+          <div class="checklist-content">
+            <div class="checklist-text">Build Odoo account and security</div>
+            <div class="checklist-note">Create user account, configure permissions, and set password</div>
+          </div>
+        </div>
+
+        <div class="checklist-item" data-id="email">
+          <div class="checklist-checkbox" onclick="toggleChecklistItem(this)"></div>
+          <div class="checklist-content">
+            <div class="checklist-text">Build email account</div>
+            <div class="checklist-note">Create email, configure signature, set up email forwarding if needed</div>
+          </div>
+        </div>
+
+        <div class="checklist-item" data-id="fts-alert">
+          <div class="checklist-checkbox" onclick="toggleChecklistItem(this)"></div>
+          <div class="checklist-content">
+            <div class="checklist-text">Alert FTS — Sangoma Talk setup needed</div>
+            <div class="checklist-note">Notify FTS that new rep will call to configure Sangoma Talk app (already installed on iOS). <button type="button" onclick="openFtsEmailTemplate()" style="background:none;border:none;color:var(--gold);text-decoration:underline;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:inherit;padding:0;">Get email template</button></div>
+          </div>
+        </div>
+
+        <div class="checklist-item" data-id="cred-card">
+          <div class="checklist-checkbox" onclick="toggleChecklistItem(this)"></div>
+          <div class="checklist-content">
+            <div class="checklist-text">Print credentials card for user</div>
+            <div class="checklist-note">Create and print small card with login credentials. <button type="button" onclick="openCredEmailTemplate()" style="background:none;border:none;color:var(--gold);text-decoration:underline;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:inherit;padding:0;">Get email template</button></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="checklist-actions">
+        <button class="checklist-action-btn" onclick="clearChecklist()">↺ Reset Checklist</button>
+        <button class="checklist-action-btn secondary" onclick="exportChecklist()">📥 Export Progress</button>
+      </div>
+
+    </div>
+
+    <!-- Modal Footer -->
+    <div style="padding:14px 24px;border-top:1px solid var(--border);background:var(--cream);display:flex;justify-content:flex-end;flex-shrink:0;">
+      <button onclick="document.getElementById('checklistModal').style.display='none'" style="padding:9px 22px;background:var(--navy);color:var(--gold);border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;" onmouseover="this.style.background='#0d1e33'" onmouseout="this.style.background='var(--navy)'">Done</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════ EMAIL TEMPLATE MODAL ══════════ -->
+<div id="emailTemplateModal" style="display:none;position:fixed;inset:0;z-index:950;background:rgba(10,15,30,.75);backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--white);border-radius:18px;border:1.5px solid var(--border);width:100%;max-width:680px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.4);overflow:hidden;">
+
+    <!-- Modal Header -->
+    <div style="background:var(--navy);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:2px solid var(--gold);">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:36px;height:36px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;">✉️</div>
+        <div>
+          <div id="emailTemplateTitle" style="font-size:15px;font-weight:700;color:#f8f6f1;letter-spacing:.01em;">Email Template</div>
+          <div id="emailTemplateSubtitle" style="font-size:11px;color:rgba(200,168,75,.7);font-family:'DM Mono',monospace;margin-top:1px;">READY TO COPY AND PASTE</div>
+        </div>
+      </div>
+      <button onclick="document.getElementById('emailTemplateModal').style.display='none'" style="background:rgba(255,255,255,.08);border:none;color:rgba(248,246,241,.6);font-size:22px;line-height:1;width:32px;height:32px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.background='rgba(255,255,255,.18)';this.style.color='#f8f6f1'" onmouseout="this.style.background='rgba(255,255,255,.08)';this.style.color='rgba(248,246,241,.6)'">×</button>
+    </div>
+
+    <!-- Scrollable Content -->
+    <div style="overflow-y:auto;padding:24px;flex:1;">
+
+      <!-- Subject Line Display -->
+      <div id="emailSubjectBox" style="background:var(--gold-pale);border-left:3px solid var(--gold);padding:12px 14px;border-radius:8px;margin-bottom:16px;">
+        <div style="font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;">Subject</div>
+        <div id="emailSubjectText" style="font-size:14px;font-weight:600;color:var(--navy);font-family:'DM Sans',sans-serif;"></div>
+      </div>
+
+      <!-- Body Display -->
+      <div style="background:var(--cream);border:1.5px solid var(--border);border-radius:10px;padding:0;overflow:hidden;">
+        <div style="background:var(--white);padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.07em;">Email Body</div>
+          <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;" id="emailBodyChars"></div>
+        </div>
+        <textarea id="emailTemplateBody" style="width:100%;min-height:300px;border:none;padding:16px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);background:var(--cream);resize:vertical;outline:none;line-height:1.6;" readonly></textarea>
+      </div>
+
+      <!-- Copy Status -->
+      <div id="emailCopyStatus" style="display:none;margin-top:12px;padding:10px 14px;background:var(--green-light);border-left:3px solid var(--green);border-radius:8px;font-size:12px;font-weight:600;color:var(--green);">
+        ✓ Copied to clipboard! Ready to paste into your email client.
+      </div>
+
+    </div>
+
+    <!-- Modal Footer -->
+    <div style="padding:14px 24px;border-top:1px solid var(--border);background:var(--cream);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:10px;flex-wrap:wrap;">
+      <div style="font-size:11px;color:var(--muted);font-style:italic;">Fields auto-fill from the form above</div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="copyEmailSubject()" style="padding:9px 16px;background:var(--white);color:var(--navy);border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;" onmouseover="this.style.background='var(--gold-pale)'" onmouseout="this.style.background='var(--white)'">📋 Copy Subject</button>
+        <button onclick="copyEmailBody()" style="padding:9px 16px;background:var(--white);color:var(--navy);border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;" onmouseover="this.style.background='var(--gold-pale)'" onmouseout="this.style.background='var(--white)'">📋 Copy Body</button>
+        <button onclick="copyEmailAll()" style="padding:9px 18px;background:var(--navy);color:var(--gold);border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;" onmouseover="this.style.background='#0d1e33'" onmouseout="this.style.background='var(--navy)'">📋 Copy All</button>
+      </div>
+    </div>
+
+  </div>
+</div>
 
 <!-- ══════════ SOP MODAL ══════════ -->
 <div id="sopModal" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(10,15,30,.75);backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:20px;">
@@ -1926,6 +2098,8 @@ function sopCheck(checkbox) {
   }
 }
 document.getElementById('sopModal').addEventListener('click', function(e){ if(e.target===this) this.style.display='none'; });
+document.getElementById('checklistModal').addEventListener('click', function(e){ if(e.target===this) this.style.display='none'; });
+document.getElementById('emailTemplateModal').addEventListener('click', function(e){ if(e.target===this) this.style.display='none'; });
 </script>
 
   <div id="deployCardContainer" style="display:none;">
@@ -4879,6 +5053,8 @@ function applyUserSession() {
     const ta = document.getElementById('trainingNotes');
     if (ta && !ta.value) ta.placeholder = currentUserName + "'s notes — log questions, blockers, or feedback here…";
   }
+  // Load saved checklist progress
+  if (typeof loadChecklistProgress === 'function') loadChecklistProgress();
 }
 
 // ══════ VIEW SWITCH (with deep links) ══════
@@ -5939,6 +6115,251 @@ function deployGenerateCard() {
   document.getElementById('deployCardContainer').style.display = 'block';
   document.getElementById('deployCardContainer').scrollIntoView({behavior: 'smooth'});
 }
+
+// ══════ DEPLOYMENT CHECKLIST ══════
+function toggleChecklistItem(checkboxEl) {
+  const item = checkboxEl.closest('.checklist-item');
+  item.classList.toggle('completed');
+  
+  if (item.classList.contains('completed')) {
+    checkboxEl.classList.add('checked');
+    checkboxEl.textContent = '✓';
+  } else {
+    checkboxEl.classList.remove('checked');
+    checkboxEl.textContent = '';
+  }
+  
+  updateChecklistProgress();
+}
+
+function updateChecklistProgress() {
+  const items = document.querySelectorAll('.checklist-item');
+  const completed = document.querySelectorAll('.checklist-item.completed').length;
+  const total = items.length;
+  
+  document.getElementById('checklistCount').textContent = completed;
+  const percentage = (completed / total) * 100;
+  document.getElementById('checklistProgress').style.width = percentage + '%';
+  
+  // Update badge on the button
+  const badge = document.getElementById('checklistBadge');
+  if (badge) {
+    if (completed > 0) {
+      badge.textContent = completed + '/' + total;
+      badge.style.display = 'inline-block';
+      // Change badge color based on completion
+      if (completed === total) {
+        badge.style.background = 'var(--green)';
+      } else {
+        badge.style.background = 'var(--gold)';
+        badge.style.color = 'var(--navy)';
+      }
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+  
+  // Store progress in localStorage
+  const checklist = {};
+  items.forEach(item => {
+    checklist[item.dataset.id] = item.classList.contains('completed');
+  });
+  localStorage.setItem('deployChecklist', JSON.stringify(checklist));
+}
+
+function clearChecklist() {
+  if (!confirm('Clear all checklist progress?')) return;
+  document.querySelectorAll('.checklist-item').forEach(item => {
+    item.classList.remove('completed');
+    item.querySelector('.checklist-checkbox').classList.remove('checked');
+    item.querySelector('.checklist-checkbox').textContent = '';
+  });
+  localStorage.removeItem('deployChecklist');
+  updateChecklistProgress();
+}
+
+function exportChecklist() {
+  const items = document.querySelectorAll('.checklist-item');
+  const completed = [];
+  const pending = [];
+  
+  items.forEach(item => {
+    const text = item.querySelector('.checklist-text').textContent;
+    if (item.classList.contains('completed')) {
+      completed.push('✓ ' + text);
+    } else {
+      pending.push('○ ' + text);
+    }
+  });
+  
+  const date = new Date().toLocaleDateString();
+  const time = new Date().toLocaleTimeString();
+  
+  let content = `TRS EQUIPMENT DEPLOY — PRE-DEPLOY CHECKLIST\n`;
+  content += `Generated: ${date} at ${time}\n`;
+  content += `\n${'='.repeat(60)}\n\n`;
+  content += `COMPLETED (${completed.length}):\n`;
+  completed.forEach(item => content += item + '\n');
+  content += `\nPENDING (${pending.length}):\n`;
+  pending.forEach(item => content += item + '\n');
+  content += `\n${'='.repeat(60)}\n`;
+  content += `Progress: ${completed.length}/${completed.length + pending.length} tasks complete`;
+  
+  const blob = new Blob([content], { type: 'text/plain' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `TRS-Deploy-Checklist-${new Date().toISOString().split('T')[0]}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  window.URL.revokeObjectURL(url);
+}
+
+function openFtsEmailTemplate(e) {
+  if (e) e.preventDefault();
+  const email = document.getElementById('deployEmail').value.trim() || '[NEW_REP_EMAIL]';
+  const name = document.getElementById('deployName').value.trim() || '[NEW_REP_NAME]';
+  const ftsContact = document.getElementById('deployFtsContact').value.trim() || '[FTS_CONTACT]';
+  const sangoma = document.getElementById('deploySangoma').value.trim() || '[EXTENSION]';
+  
+  const subject = `Sangoma Talk Setup Request — New Sales Rep`;
+  const body = `Hi ${ftsContact},
+
+We have a new sales rep onboarding and need your help getting their Sangoma Talk app configured on their iPad.
+
+Rep details:
+• Name: ${name}
+• Email: ${email}
+• Extension: ${sangoma}
+
+Status: Sangoma Talk app is already installed on the iOS device and ready for configuration. They'll be giving you a call shortly to walk through the setup — please expect their call.
+
+Let us know if you need anything else from our end.
+
+Thanks,
+[YOUR_NAME]`;
+
+  showEmailTemplate('FTS Sangoma Talk Setup', 'Request Sangoma Talk configuration for new rep', subject, body);
+}
+
+function openCredEmailTemplate(e) {
+  if (e) e.preventDefault();
+  const email = document.getElementById('deployEmail').value.trim() || '[EMAIL]';
+  const name = document.getElementById('deployName').value.trim() || '[NAME]';
+  const odooEmail = document.getElementById('deployOdooEmail').value.trim() || '[ODOO_EMAIL]';
+  const odooPass = document.getElementById('deployOdooPass').value.trim() || '[ODOO_PASSWORD]';
+  
+  const subject = `Your Login Credentials & Welcome to TRS`;
+  const body = `Hi ${name},
+
+Welcome to TRS! Here are your login credentials:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ODOO CRM LOGIN
+Email: ${odooEmail}
+Password: ${odooPass}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Your equipment is set up and ready. Log in to Odoo and explore your account. You'll find training resources and docs in the knowledge base.
+
+If you have any questions, reach out to the team. We're excited to have you on board!
+
+Best,
+[YOUR_NAME]
+TRS Team`;
+
+  showEmailTemplate('Credentials Welcome Email', 'Send login credentials to new rep', subject, body);
+}
+
+function showEmailTemplate(title, subtitle, subject, body) {
+  document.getElementById('emailTemplateTitle').textContent = title;
+  document.getElementById('emailTemplateSubtitle').textContent = subtitle.toUpperCase();
+  document.getElementById('emailSubjectText').textContent = subject;
+  document.getElementById('emailTemplateBody').value = body;
+  document.getElementById('emailBodyChars').textContent = body.length + ' chars';
+  document.getElementById('emailCopyStatus').style.display = 'none';
+  document.getElementById('emailTemplateModal').style.display = 'flex';
+}
+
+function copyEmailSubject() {
+  const subject = document.getElementById('emailSubjectText').textContent;
+  copyToClipboard(subject, 'Subject copied to clipboard!');
+}
+
+function copyEmailBody() {
+  const body = document.getElementById('emailTemplateBody').value;
+  copyToClipboard(body, 'Body copied to clipboard!');
+}
+
+function copyEmailAll() {
+  const subject = document.getElementById('emailSubjectText').textContent;
+  const body = document.getElementById('emailTemplateBody').value;
+  const combined = `Subject: ${subject}\n\n${body}`;
+  copyToClipboard(combined, 'Full email copied to clipboard!');
+}
+
+function copyToClipboard(text, message) {
+  const statusEl = document.getElementById('emailCopyStatus');
+  
+  // Try modern clipboard API first
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      statusEl.textContent = '✓ ' + message + ' Ready to paste into your email client.';
+      statusEl.style.display = 'block';
+      setTimeout(() => { statusEl.style.display = 'none'; }, 3500);
+    }).catch(() => {
+      fallbackCopy(text, message, statusEl);
+    });
+  } else {
+    fallbackCopy(text, message, statusEl);
+  }
+}
+
+function fallbackCopy(text, message, statusEl) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.left = '-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    document.execCommand('copy');
+    statusEl.textContent = '✓ ' + message + ' Ready to paste into your email client.';
+    statusEl.style.display = 'block';
+    setTimeout(() => { statusEl.style.display = 'none'; }, 3500);
+  } catch (err) {
+    statusEl.textContent = '⚠ Could not auto-copy — select text manually and copy';
+    statusEl.style.background = 'var(--red-light)';
+    statusEl.style.borderLeftColor = 'var(--red)';
+    statusEl.style.color = 'var(--red)';
+    statusEl.style.display = 'block';
+  }
+  document.body.removeChild(ta);
+}
+
+// Load checklist progress on page load
+function loadChecklistProgress() {
+  const saved = localStorage.getItem('deployChecklist');
+  if (!saved) return;
+  
+  try {
+    const checklist = JSON.parse(saved);
+    document.querySelectorAll('.checklist-item').forEach(item => {
+      const id = item.dataset.id;
+      if (checklist[id]) {
+        item.classList.add('completed');
+        item.querySelector('.checklist-checkbox').classList.add('checked');
+        item.querySelector('.checklist-checkbox').textContent = '✓';
+      }
+    });
+    updateChecklistProgress();
+  } catch (e) {
+    console.log('Could not load checklist');
+  }
+}
+
+// ══════ DEPLOYMENT CARD ══════
 
 function deployResetForm() {
   if (!confirm('Clear all deployment details?')) return;
